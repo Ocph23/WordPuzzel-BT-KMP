@@ -1,0 +1,65 @@
+﻿<Window x:Class="GameWordPuzzel.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameWordPuzzel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="421.281" Width="619.508">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+
+
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="158*" />
+            <RowDefinition Height="93*" />
+            <RowDefinition Height="93*" />
+            <RowDefinition Height="46*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.ColumnSpan="5" Margin="10,14,10,18" VerticalAlignment="Center" Height="126">
+            <TextBlock HorizontalAlignment="Center" Text="APLIKASI PEMBELAJARAN" FontSize="22" FontWeight="Bold">
+                <TextBlock.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF339129" Offset="0"/>
+                        <GradientStop Color="#FF2E442A" Offset="1"/>
+                    </LinearGradientBrush>
+                </TextBlock.Foreground></TextBlock>
+            <TextBlock HorizontalAlignment="Center" Text="ALGORITMA BACKTRACKING DAN KNUT-MORRIS-PRATT" FontSize="22" FontWeight="Bold">
+                <TextBlock.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF339129" Offset="0"/>
+                        <GradientStop Color="#FF2E442A" Offset="1"/>
+                    </LinearGradientBrush>
+                </TextBlock.Foreground></TextBlock>
+            <TextBlock Margin="20" HorizontalAlignment="Center" Text="MENU UTAMA" FontSize="22" FontWeight="Bold">
+                <TextBlock.Foreground>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF339129" Offset="0"/>
+                        <GradientStop Color="#FF2E442A" Offset="1"/>
+                    </LinearGradientBrush>
+                </TextBlock.Foreground></TextBlock>
+        </StackPanel>
+
+        <Button Name="btnGame" Click="btnGame_Click" Margin="5" Content="Game" Grid.Row="1" Grid.Column="1" BorderBrush="Aquamarine" FontSize="36" >
+            <Button.Background>
+                <ImageBrush ImageSource="Images/magical-castle-background.png"/>
+            </Button.Background>
+        </Button>
+        <Button Margin="5" Content="Materi" Grid.Row="1" Grid.Column="2" >
+            <Button.Background>
+                <ImageBrush ImageSource="Images/cartoons-background-006.jpg"/>
+            </Button.Background>
+        </Button>
+        <Button Margin="5" Content="Kuis" Grid.Row="1" Grid.Column="3" ></Button>
+        <Button Name="btnadmin" Margin="5" Content="Admin" Grid.Row="2" Grid.Column="1" BorderBrush="{x:Null}" Click="btnadmin_Click" ></Button>
+        <Button Margin="5" Content="About" Grid.Row="2" Grid.Column="2" BorderBrush="{x:Null}" ></Button>
+        <Button Margin="5" Content="Exit" Grid.Row="2" Grid.Column="3" ></Button>
+    </Grid>
+</Window>

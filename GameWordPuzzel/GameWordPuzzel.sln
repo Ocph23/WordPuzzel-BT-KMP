@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameWordPuzzel", "GameWordPuzzel\GameWordPuzzel.csproj", "{84F9CB79-7F5A-43F0-9CE4-C0AD4820A574}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "C:\Users\ocph23\Source\Repos\OcphDAL\IQuerableImplement\DAL.csproj", "{B80CEFB7-FB32-4C32-9FBF-1F0AD7DD2863}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84F9CB79-7F5A-43F0-9CE4-C0AD4820A574}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84F9CB79-7F5A-43F0-9CE4-C0AD4820A574}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84F9CB79-7F5A-43F0-9CE4-C0AD4820A574}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84F9CB79-7F5A-43F0-9CE4-C0AD4820A574}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B80CEFB7-FB32-4C32-9FBF-1F0AD7DD2863}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B80CEFB7-FB32-4C32-9FBF-1F0AD7DD2863}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B80CEFB7-FB32-4C32-9FBF-1F0AD7DD2863}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B80CEFB7-FB32-4C32-9FBF-1F0AD7DD2863}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6FBCBF37-C9D4-4A18-848B-77E9DA1E40E8}
+	EndGlobalSection
+EndGlobal

@@ -29,8 +29,10 @@ namespace GameWordPuzzel.Models
         {
             this.Text.TextDecorations = TextDecorations.Strikethrough;
             this.Text.Foreground = Brushes.Red;
+            this.IsFound = true;
         }
 
         public TextBlock Text { get; set; }
+        public bool IsFound { get; private set; }
     }
 }

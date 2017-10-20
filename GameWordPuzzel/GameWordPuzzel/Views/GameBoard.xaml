@@ -5,16 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameWordPuzzel.Views"
         mc:Ignorable="d"
-        Title="GameBoard" Height="500" Width="600">
+        Title="GameBoard" Height="700" Width="700">
     <Window.Resources>
         <Style TargetType="{x:Type UserControl}">
             <Setter Property="Background" Value="Red" />
         </Style>
     </Window.Resources>
     <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="/GameWordPuzzel;component/Images/cartoons-background-006.jpg"/>
-        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="146*"/>
             <RowDefinition Height="284*"/>
@@ -27,8 +24,9 @@
         <StackPanel Grid.Column="2" Grid.RowSpan="3">
             <WrapPanel Margin="10" Orientation="Horizontal" Name="dataToSearchView"></WrapPanel>
             <StackPanel Margin="10" Name="CommandLine" Height="185" Background="#FF191818"></StackPanel>
+            <Button Content="BT" Width="175" Click="Button_Click_1" Height="35" Margin="9,0"></Button>
         </StackPanel>
         <Grid Name="canvas" Grid.RowSpan="2" Grid.Column="0"></Grid>
-        <Button Margin="10" Content="Refresh Board" Grid.Column="0" Grid.Row="2" Opacity="0.7"  HorizontalAlignment="Left" Width="101" FontWeight="Bold" Click="Button_Click"/>
+        <Button Margin="3" Content="Refresh Board" Grid.Column="0" Grid.Row="2" Opacity="0.7"  HorizontalAlignment="Left" Width="101" FontWeight="Bold" Click="Button_Click"/>
     </Grid>
 </Window>

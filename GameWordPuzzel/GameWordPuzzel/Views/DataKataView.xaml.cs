@@ -133,5 +133,7 @@ namespace GameWordPuzzel.Views
         {
             this.Close();
         }
+
+
     }
 }

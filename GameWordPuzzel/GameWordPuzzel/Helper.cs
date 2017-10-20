@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameWordPuzzel.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -20,8 +21,8 @@ namespace GameWordPuzzel
 
         public static Diagonal FindOnesFromLeftToRight(int[,] matrix,int row, int col)
         {
-            int rows = matrix.GetUpperBound(0) + 1;
-            int columns = matrix.GetUpperBound(1) + 1;
+            int rows = matrix.GetLength(0);
+            int columns = matrix.GetLength(1);
             int lastColumnIndex = columns - 1;
             int lastRowIndex = rows - 1;
 
@@ -39,7 +40,7 @@ namespace GameWordPuzzel
                 Number = max
             };
 
-            while ((i > 0 && i < 9) && (j > 0 && j < 9))
+            while ((i > 0 && i < rows) && (j > 0 && j < columns))
             {
                 i = i - 1;
                 da.RowStart = i;
@@ -74,8 +75,8 @@ namespace GameWordPuzzel
 
         public static Diagonal FindOnesFromRightToLeft(int[,] matrix,  int row, int col)
         {
-            int rows = matrix.GetUpperBound(0) + 1;
-            int columns = matrix.GetUpperBound(1) + 1;
+            int rows = matrix.GetLength(0);
+            int columns = matrix.GetLength(1);
             int lastColumnIndex = columns - 1;
             int lastRowIndex = rows - 1;
 
@@ -96,7 +97,7 @@ namespace GameWordPuzzel
                 Number = max
             };
 
-            while ((i > 0 && i < 9) && (j > 0 && j < 9))
+            while ((i > 0 && i < rows) && (j > 0 && j < columns))
             {
                 i = i - 1;
                 da.RowStart = i;
@@ -107,7 +108,7 @@ namespace GameWordPuzzel
 
             while (j >= 0)
             {
-                if ((i >= 0 && i <= 9) && (j >= 0 && j <= 9))
+                if ((i >= 0 && i <= rows) && (j >= 0 && j <= columns))
                 {
                     lastrow = i;
                     lastcol = j;
@@ -175,19 +176,9 @@ namespace GameWordPuzzel
         }
         
         
-        internal static int RandomPosisionColumn(Random rcolumn)
+        public static int RandomPosision(Random rrow, int max)
         {
-            const string chars = "1234567890";
-            return Convert.ToInt32(new string(Enumerable.Repeat(chars, 1)
-              .Select(s => s[rcolumn.Next(s.Length)]).ToArray()));
-        }
-
-       
-        public static int RandomPosisionRow(Random rrow)
-        {
-            const string chars = "1234567890";
-            return Convert.ToInt32(new string(Enumerable.Repeat(chars, 1)
-              .Select(s => s[rrow.Next(s.Length)]).ToArray()));
+            return rrow.Next(0, max-1);
         }
 
         public static Arah RandomArah(Random rarah)
@@ -204,6 +195,11 @@ namespace GameWordPuzzel
             else
                 return Arah.Diagonal;
         }
+
+        //Soulition With Back Tract
+       
+
+        
 
     }
 }

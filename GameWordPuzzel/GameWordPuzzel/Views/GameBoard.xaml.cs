@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,13 +32,14 @@ namespace GameWordPuzzel.Views
         public bool Start { get; private set; }
         public List<ButtonView> ListSelected { get; private set; }
         public Brush CurrentColor { get; private set; }
-        public List<string> ListResult { get;  set; }
+       // public List<string> ListResult { get;  set; }
         private List<string> NotAccepted = new List<string>();
 
         private Random random = new Random();
        private  Random rrow = new Random();
-        private Random rcolumn = new Random();
         private Random rarah = new Random();
+        private int columns;
+        private int rows;
 
         private void GameBoard_Loaded(object sender, RoutedEventArgs e)
         {
@@ -46,8 +48,9 @@ namespace GameWordPuzzel.Views
 
         private void RefreshBoard()
         {
-            var columns = 10;
-            var rows = 10;
+            var x =10;
+            this.columns = x;
+            this.rows = x;
             DataSource = new List<string>();
             DataSource.Add("MAKANAN");
             DataSource.Add("MINUM");
@@ -58,9 +61,11 @@ namespace GameWordPuzzel.Views
             DataSource.Add("QUIZ");
             DataSource.Add("SERAKAH");
             DataSource.Add("KEHIDUPAN");
+            DataSource.Add("MUSIK");
+            DataSource.Add("BIOLA");
 
             var datas = new List<string>();
-            ListResult = new List<string>();
+            //ListResult = new List<string>();
             dataToSearchView.Children.Clear();
             canvas.Children.Clear();
             canvas.ColumnDefinitions.Clear();
@@ -68,7 +73,7 @@ namespace GameWordPuzzel.Views
             foreach (var item in this.DataSource)
             {
                 datas.Add(item);
-                dataToSearchView.Children.Add(new BorderLabel(item));
+     
             }
 
             for (int i = 0; i < rows; i++)
@@ -85,7 +90,7 @@ namespace GameWordPuzzel.Views
             {
                 for (var j = 0; j < canvas.ColumnDefinitions.Count; j++)
                 {
-                    var button = new ButtonView { FontSize = 20, Row = i, Column = j, Name = string.Format("R{0}C{1}", i, j) };
+                    var button = new ButtonView(new Cordinate(this.columns,this.rows)) { FontSize = 30-x, Row = i, Column = j, Name = string.Format("R{0}C{1}", i, j) };
                     button.main.Content = Helper.RandomString(random);
                     button.MouseEnter += Button_MouseEnter; ;
                     button.main.Click += Main_Click;
@@ -105,25 +110,32 @@ namespace GameWordPuzzel.Views
                     try
                     {
                         var arah = Helper.RandomArah(rarah);
-                        var row = Helper.RandomPosisionRow(rrow);
-                        var col = Helper.RandomPosisionColumn(rcolumn);
+                        var row = Helper.RandomPosision(rrow,rows);
+                        var col = Helper.RandomPosision(rrow,columns);
                         var dataposition = new DataPosition(item);
 
 
-
+                        DataPosition data = null;
                         if (arah == Arah.Horizontal)
                         {
-                            DataPosition data = HorizontalPlace(item, row, col);
+                            data = HorizontalPlace(item, row, col);
                         }
                         else if (arah == Arah.Vertical)
                         {
-                            DataPosition data = VerticalPlace(item, row, col);
+                            data = VerticalPlace(item, row, col);
 
                         }
                         else if (arah == Arah.Diagonal)
                         {
-                            DataPosition data = DiagonalPlace(item, row, col);
+                             data = DiagonalPlace(item, row, col);
                         }
+
+                        if(data!=null && data.Datas.Count>0)
+                        {
+                            dataToSearchView.Children.Add(new BorderLabel(data.Content));
+                        }
+                      
+
                     }
                     catch (Exception ex)
                     {
@@ -132,20 +144,8 @@ namespace GameWordPuzzel.Views
 
 
                 }
-
-                if (NotAccepted.Count == 0)
-                {
-                    RandomCompleted = true;
-                }
-                else
-                {
-                    datas.Clear();
-                    foreach (var item in NotAccepted)
-                    {
-                        datas.Add(item);
-                    }
-                    NotAccepted.Clear();
-                }
+                RandomCompleted = true;
+              
             }
 
 
@@ -163,8 +163,8 @@ namespace GameWordPuzzel.Views
             {
                 this.ListSelected = new List<ButtonView>();
                 CurrentColor = Helper.PickBrush();
-                grid.Children.Add(Helper.NewBorder(CurrentColor));
-
+                // grid.Children.Add(Helper.NewBorder(CurrentColor));
+                btn.SetIsUsed(CurrentColor);
                 btn.IsStarter = true;
             }
             else
@@ -176,8 +176,6 @@ namespace GameWordPuzzel.Views
                         ClearBorder(item.main);
                     }
                     ListSelected.Clear();
-
-
                 }
                 else
                 {
@@ -203,7 +201,7 @@ namespace GameWordPuzzel.Views
                             }
                         }
 
-                        ListResult.Add(sb.ToString());
+                        //ListResult.Add(sb.ToString());
                     }else
                     {
                         ClearSelected();
@@ -223,7 +221,7 @@ namespace GameWordPuzzel.Views
         private void Button_MouseEnter(object sender, MouseEventArgs e)
         {
             var btn = (ButtonView)sender;
-            Grid grid = (Grid)btn.main.Parent;
+          //  Grid grid = (Grid)btn.main.Parent;
             if (this.Start == true)
             {
                 var Avaliable = ListSelected.Where(O => O.Column == btn.Column && O.Row == btn.Row).FirstOrDefault();
@@ -237,8 +235,9 @@ namespace GameWordPuzzel.Views
                 {
                     if (lastBtn.IsStarter && ListSelected.Count==1)
                     {
-                      
-                        grid.Children.Add(Helper.NewBorder(CurrentColor));
+
+                        //  grid.Children.Add(Helper.NewBorder(CurrentColor));
+                        btn.SetIsUsed(CurrentColor);
                         this.ListSelected.Add(btn);
                     }
                     else if (!lastBtn.IsStarter && ListSelected.Count > 1)
@@ -248,49 +247,57 @@ namespace GameWordPuzzel.Views
                         if (starter.Row==btn.Row && lastBtn.Column-starter.Column>=0 && btn.Column-lastBtn.Column==1)
                         {
                             //Horizontal Left To Right
-                            grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            //  grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            btn.SetIsUsed(CurrentColor);
                             this.ListSelected.Add(btn);
                         }
                         else if (starter.Row == btn.Row && lastBtn.Column - starter.Column < 0 && lastBtn.Column- btn.Column  == 1)
                         {
                             //Horizontal Right To Left
-                            grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            // grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            btn.SetIsUsed(CurrentColor);
                             this.ListSelected.Add(btn);
                         }
                         else if (starter.Column == btn.Column && lastBtn.Row - starter.Row >= 0 && btn.Row - lastBtn.Row == 1)
                         {
                             //Verical Top To Bottom
-                            grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            //grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            btn.SetIsUsed(CurrentColor);
                             this.ListSelected.Add(btn);
                         }
                         else if (starter.Column == btn.Column && lastBtn.Row - starter.Row < 0 && lastBtn.Row- btn.Row  == 1)
                         {
                             //Vertical Bottom To Top
-                            grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            // grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            btn.SetIsUsed(CurrentColor);
                             this.ListSelected.Add(btn);
                         }
                         else if (starter.Column < lastBtn.Column && starter.Row<lastBtn.Row && btn.Column-lastBtn.Column==1 && btn.Row-lastBtn.Row==1)
                         {
                             //Diagonal Left To Right To Bottom
-                            grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            //  grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            btn.SetIsUsed(CurrentColor);
                             this.ListSelected.Add(btn);
                         }
                         else if (starter.Column > lastBtn.Column && starter.Row > lastBtn.Row && btn.Column - lastBtn.Column < 0 && btn.Row - lastBtn.Row <0)
                         {
                             //Diagonal Left To Right To Top
-                            grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            // grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            btn.SetIsUsed(CurrentColor);
                             this.ListSelected.Add(btn);
                         }
                         else if (starter.Column > lastBtn.Column && starter.Row < lastBtn.Row && btn.Column - lastBtn.Column <0 && btn.Row - lastBtn.Row == 1)
                         {
                             //Diagonal Right To Left To Bottom
-                            grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            // grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            btn.SetIsUsed(CurrentColor);
                             this.ListSelected.Add(btn);
                         }
                         else if (starter.Column < lastBtn.Column && starter.Row > lastBtn.Row && btn.Column - lastBtn.Column ==1 && btn.Row - lastBtn.Row < 0)
                         {
                             //Diagonal Right To left Top
-                            grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            //  grid.Children.Add(Helper.NewBorder(CurrentColor));
+                            btn.SetIsUsed(CurrentColor);
                             this.ListSelected.Add(btn);
                         }
                     }
@@ -344,8 +351,6 @@ namespace GameWordPuzzel.Views
         {
 
             var dataposition = new DataPosition(item);
-            const int rows = 10;
-            const int columns = 10;
             int[,] matrix = new int[rows, columns];
             var lrc = Helper.FindOnesFromLeftToRight(matrix, row, col);
             var rlc = Helper.FindOnesFromRightToLeft(matrix, row, col);
@@ -410,7 +415,7 @@ namespace GameWordPuzzel.Views
                         catch (Exception)
                         {
                             error++;
-                            if (error <= 9)
+                            if (error <= columns)
                             {
                                 col--;
                                 row--;
@@ -490,7 +495,7 @@ namespace GameWordPuzzel.Views
                         catch (Exception ex)
                         {
                             error++;
-                            if (error <= 9)
+                            if (error <= rows-1)
                             {
                                 col--;
                                 row--;
@@ -568,7 +573,7 @@ namespace GameWordPuzzel.Views
                         catch (Exception)
                         {
                             error++;
-                            if (error <= 9)
+                            if (error <= rows)
                             {
                                 col--;
                                 row--;
@@ -654,7 +659,7 @@ namespace GameWordPuzzel.Views
                         {
 
                             error++;
-                            if (error <= 9)
+                            if (error <= rows)
                             {
                                 col++;
                                 row--;
@@ -733,11 +738,11 @@ namespace GameWordPuzzel.Views
                         {
 
                             error++;
-                            if (error <= 9)
+                            if (error <= rows)
                             {
                                 col++;
                                 // row++;
-                                if (row > 9 || col > 9)
+                                if (row > rows || col > rows)
                                 {
                                     NotAccepted.Add(item);
                                     completed = true;
@@ -812,7 +817,7 @@ namespace GameWordPuzzel.Views
                         {
                             Debug.WriteLine(string.Format("{0} From RLC Else", ex.Message));
                             error++;
-                            if (error <= 9)
+                            if (error <= rows)
                             {
                                 col--;
                                 row--;
@@ -835,7 +840,8 @@ namespace GameWordPuzzel.Views
             else
             {
                 NotAccepted.Add(item);
-                Debug.WriteLine("{0} Not Implement Diagonal", item);
+               // Debug.WriteLine("{0} Not Implement Diagonal", item);
+               
 
             }
             return dataposition;
@@ -845,7 +851,7 @@ namespace GameWordPuzzel.Views
         private DataPosition VerticalPlace(string item, int row, int col)
         {
             var dataposition = new DataPosition(item);
-            if (row + item.Length <= 9)
+            if (row + item.Length <= rows)
             {
                 bool completed = false;
                 int error = 0;
@@ -891,9 +897,9 @@ namespace GameWordPuzzel.Views
                     catch (Exception)
                     {
                         error++;
-                        if (error <= 9)
+                        if (error <= rows)
                         {
-                            if (col >= 9)
+                            if (col >= rows)
                                 col = 0;
                             else
                                 col++;
@@ -916,7 +922,7 @@ namespace GameWordPuzzel.Views
                 while (!completed)
                 {
                     var index = item.Length - 1;
-                    row = 9 - item.Length;
+                    row = rows - item.Length;
                     try
                     {
                         int colTest = col;
@@ -939,7 +945,7 @@ namespace GameWordPuzzel.Views
                             }
                         }
                         index = item.Length - 1;
-                        row = 9 - item.Length;
+                        row = rows - item.Length;
                         foreach (ButtonView btn in canvas.Children)
                         {
                             if (btn.Column == col && btn.Row == row && index < item.Length)
@@ -960,9 +966,9 @@ namespace GameWordPuzzel.Views
                     catch (Exception)
                     {
                         error++;
-                        if (error <= 9)
+                        if (error <= rows)
                         {
-                            if (col >= 9)
+                            if (col >= columns-1)
                                 col = 0;
                             else
                                 col++;
@@ -981,6 +987,7 @@ namespace GameWordPuzzel.Views
                 row = 0;
                 bool completed = false; ;
                 int error = 0;
+                dataposition.Datas.Clear();
                 while (!completed)
                 {
                     try
@@ -1020,12 +1027,12 @@ namespace GameWordPuzzel.Views
                         }
                         completed = true;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         error++;
-                        if (error <= 9)
+                        if (error <= columns-1)
                         {
-                            if (col >= 9)
+                            if (col >= columns - 1)
                                 col = 0;
                             else
                                 col++;
@@ -1046,7 +1053,7 @@ namespace GameWordPuzzel.Views
         private DataPosition HorizontalPlace(string item, int row, int col)
         {
             var dataposition = new DataPosition(item);
-            if (col + item.Length <= 9)
+            if (col + item.Length <= columns-1)
             {
                 bool completed = false;
                 int error = 0;
@@ -1058,6 +1065,7 @@ namespace GameWordPuzzel.Views
                         int colTest = col;
                         int rowTest = row;
                         Dictionary<int, string> indexUseds = new Dictionary<int, string>();
+                        dataposition.Datas.Clear();
                         foreach (ButtonView btn in canvas.Children)
                         {
                             if (btn.Column == colTest && btn.Row == rowTest && index < item.Length)
@@ -1071,30 +1079,33 @@ namespace GameWordPuzzel.Views
                                     }
 
                                 }
+                                dataposition.Datas.Add(btn);
                                 colTest += 1;
                                 index += 1;
                             }
                         }
+
                         index = 0;
-                        foreach (ButtonView btn in canvas.Children)
+                        if(dataposition.Datas.Count>0)
                         {
-                            if (btn.Column == col && btn.Row == row && index < item.Length)
+                            foreach(var btn in dataposition.Datas)
                             {
                                 btn.main.Content = item.Substring(index, 1);
-                                dataposition.Datas.Add(btn);
                                 SetObjectColorAndUsed(btn);
-                                col += 1;
-                                index += 1;
+                                index++;
                             }
+                            completed = true;
+                        }else
+                        {
+                            NotAccepted.Add(item);
                         }
-                        completed = true;
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         error++;
-                        if (error <= 9)
+                        if (error <= columns - 1)
                         {
-                            if (row >= 9)
+                            if (row >= rows-1)
                                 row = 0;
                             else
                                 row++;
@@ -1118,7 +1129,7 @@ namespace GameWordPuzzel.Views
                 while (!completed)
                 {
                     var index = item.Length - 1;
-                    col = 9 - item.Length;
+                    col = rows-1 - item.Length;
                     try
                     {
                         int colTest = col;
@@ -1141,7 +1152,7 @@ namespace GameWordPuzzel.Views
                             }
                         }
                         index = item.Length - 1;
-                        col = 9 - item.Length;
+                        col = rows-1 - item.Length;
                         foreach (ButtonView btn in canvas.Children)
                         {
                             if (btn.Column == col && btn.Row == row && index < item.Length)
@@ -1162,9 +1173,9 @@ namespace GameWordPuzzel.Views
                     catch (Exception ex)
                     {
                         error++;
-                        if (error <= 9)
+                        if (error <= rows-1)
                         {
-                            if (row >= 9)
+                            if (row >= rows-1)
                                 row = 0;
                             else
                                 row++;
@@ -1182,7 +1193,7 @@ namespace GameWordPuzzel.Views
             }
             else
             {
-                col = 9 - item.Length;
+                col = this.columns-item.Length;
                 bool completed = false; ;
                 var error = 0;
 
@@ -1227,12 +1238,12 @@ namespace GameWordPuzzel.Views
                         }
                         completed = true;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         error++;
-                        if (error <= 9)
+                        if (error <= rows-1)
                         {
-                            if (row >= 9)
+                            if (row >= rows-1)
                                 row = 0;
                             else
                                 row++;
@@ -1252,13 +1263,472 @@ namespace GameWordPuzzel.Views
 
         private void SetObjectColorAndUsed(ButtonView btn)
         {
-           // btn.main.Background = CurrentColor;
+          //  btn.main.Background = CurrentColor;
             btn.IsUsed = true;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.RefreshBoard();   
+        }
+
+        private async Task SolutionWithBackTractAsync()
+        {
+            string findtext = "";
+            BorderLabel bl = null;
+            foreach(var item in dataToSearchView.Children)
+            {
+                 bl = (BorderLabel)item;
+                if(bl!=null && !bl.IsFound)
+                {
+                    findtext = bl.Name;
+                    break;
+                }
+            }
+
+
+            Console.WriteLine(findtext);
+            //Backtrack
+
+            List<ButtonView> sb = new List<ButtonView>();
+            int datake = 0;
+            bool isComplete = false;
+            var Datas = canvas.Children.OfType<ButtonView>();
+
+            while (!isComplete)
+            {
+                for (var i = 0; i < rows; i++)
+                {
+                    for (var j = 0; j < columns; j++)
+                    {
+                      
+                        datake = 0;
+                        var startobj = this.GetButtonView(Datas, i, j);
+                        await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
+                        if (findtext.Substring(datake, 1) == startobj.main.Content.ToString())
+                        {
+                            //FInd Horzontal To Right 
+                            if (!isComplete)
+                            {
+                                if(columns-j>=findtext.Length)
+                                {
+                                    sb.Add(startobj);
+                                    datake++;
+                                    for (var n = j + 1; n < columns; n++)
+                                    {
+                                       var obj = GetButtonView(Datas, i, n);
+                                        await Task.Factory.StartNew(() => SetUsed(obj, ArahPanah.HorizontalToRight));
+                                        if (obj.main.Content.ToString() == findtext.Substring(datake, 1))
+                                        {
+                                            sb.Add(obj);
+                                            datake++;
+                                        }
+                                        else
+                                        {
+                                            datake = 0;
+                                            ClearSelectedHelp(sb);
+                                            ClearItemHelp(obj);
+                                            break;
+
+                                        }
+                                        if (sb.Count == findtext.Length)
+                                        {
+                                            isComplete = true;
+                                            SetFounded(sb);
+                                            bl.Found();
+                                            break;
+                                        }
+                                    }
+                                }
+                               
+                            }
+
+                            //FInd Horzontal To Left : "
+                            if (!isComplete)
+                            {
+                                if (j+1-findtext.Length >= 0)
+                                {
+                                    await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
+                                    sb.Add(startobj);
+                                    datake++;
+                                    for (var n = j - 1; n >= (j+1-findtext.Length); n--)
+                                    {
+                                       var obj = GetButtonView(Datas, i, n);
+                                        await Task.Factory.StartNew(() => SetUsed(obj, ArahPanah.HorizontalToLeft));
+                                        if (obj.main.Content.ToString() == findtext.Substring(datake, 1))
+                                        {
+                                            sb.Add(obj);
+                                            datake++;
+                                        }
+                                        else
+                                        {
+                                            datake = 0;
+                                            
+                                            ClearSelectedHelp(sb);
+                                            ClearItemHelp(obj);
+                                            break;
+
+                                        }
+                                        if (sb.Count== findtext.Length)
+                                        {
+                                            Console.WriteLine("Found : " + sb.ToString());
+                                            isComplete = true;
+                                            SetFounded(sb);
+                                            bl.Found();
+                                            break;
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            //Vertical to Bottom
+                            if (!isComplete)
+                            {
+                                if (rows - i >= findtext.Length)
+                                {
+                                    await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
+                                    sb.Add(startobj);
+                                    datake++;
+                                    for (var n = i + 1; n < rows; n++)
+                                    {
+                                       var obj = GetButtonView(Datas, n, j);
+                                        await Task.Factory.StartNew(() => SetUsed(obj, ArahPanah.VerticalToBottom));
+                                        if (obj.main.Content.ToString() == findtext.Substring(datake, 1))
+                                        {
+                                            sb.Add(obj);
+                                            datake++;
+                                        }
+                                        else
+                                        {
+                                            datake = 0;
+                                            ClearSelectedHelp(sb);
+                                            ClearItemHelp(obj);
+                                            break;
+
+                                        }
+                                        if (sb.Count== findtext.Length)
+                                        {
+                                            isComplete = true;
+                                            SetFounded(sb);
+                                            bl.Found();
+                                            break;
+                                        }
+                                    }
+                                }
+
+                            }
+                            if (!isComplete)
+                            {
+                                //"FInd Vertical To TOP : ";
+                                if (i - findtext.Length >= 0)
+                                {
+                                    await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
+                                    sb.Add(startobj);
+                                    datake++;
+                                    for (var n = i - 1; n > 0; n--)
+                                    {
+                                       var obj = GetButtonView(Datas, n, j);
+                                        await Task.Factory.StartNew(() => SetUsed(obj, ArahPanah.VerticalToTop));
+                                        if (obj.main.Content.ToString() == findtext.Substring(datake, 1))
+                                        {
+                                            sb.Add(obj);
+                                            datake++;
+
+                                        }
+                                        else
+                                        {
+                                            datake = 0;
+                                            ClearSelectedHelp(sb);
+                                            ClearItemHelp(obj);
+                                            break;
+
+                                        }
+                                        if (sb.Count == findtext.Length)
+                                        {
+                                            isComplete = true;
+                                            SetFounded(sb);
+                                            bl.Found();
+                                            break;
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            if (!isComplete)
+                            {
+                               // "Diagonal Left To Right To Bottom : ";
+                                var l =Helper.FindOnesFromLeftToRight((new int[rows, columns]), i, j);
+                                if (l.SecoundCount >= findtext.Length)
+                                {
+                                    await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
+                                    sb.Add(startobj);
+                                    datake++;
+                                    int m = j+1;
+                                    for (var n = i + 1; n < rows; n++)
+                                    {
+                                      var  obj = GetButtonView(Datas, n, m);
+                                        await Task.Factory.StartNew(() => SetUsed(obj, ArahPanah.DiagonalToDownRight));
+                                        if (obj.main.Content.ToString()== findtext.Substring(datake, 1))
+                                        {
+                                            sb.Add(obj);
+                                            datake++;
+
+                                        }
+                                        else
+                                        {
+                                            datake = 0;
+                                            ClearSelectedHelp(sb);
+                                            ClearItemHelp(obj);
+                                            break;
+
+                                        }
+                                        m++;
+
+                                        if (sb.Count == findtext.Length)
+                                        {
+                                            isComplete = true;
+                                            SetFounded(sb);
+                                            bl.Found();
+                                            break;
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+                            if (!isComplete)
+                            {
+                                datake = 0;
+                              //  "Diagonal Left To Right To Up : ";
+                                var l = Helper.FindOnesFromLeftToRight((new int[rows, columns]), i, j);
+                                if (l.FirstCount > findtext.Length)
+                                {
+                                    await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
+                                    sb.Add(startobj);
+                                    datake++;
+                                    int m = j - 1;
+                                    for (var n = i - 1; n < rows; n--)
+                                    {
+
+                                       var obj = GetButtonView(Datas, n, m);
+                                        await Task.Factory.StartNew(() => SetUsed(obj, ArahPanah.DiagonalToUpLeft));
+                                        if (obj.main.Content.ToString() == findtext.Substring(datake, 1))
+                                        {
+                                            sb.Add(obj);
+                                            datake++;
+
+                                        }
+                                        else
+                                        {
+                                            datake = 0;
+                                            ClearSelectedHelp(sb);
+                                            ClearItemHelp(obj);
+                                            break;
+
+                                        }
+                                        m--;
+
+                                        if (sb.Count== findtext.Length)
+                                        {
+                                            isComplete = true;
+                                            SetFounded(sb);
+                                            bl.Found();
+                                            break;
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+
+                            if (!isComplete)
+                            {
+                               // "Diagonal Right To Left To Bottom : ";
+                                var l = Helper.FindOnesFromRightToLeft((new int[rows, columns]), i, j);
+                                if (l.SecoundCount > findtext.Length)
+                                {
+                                    await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
+                                    sb.Add(startobj);
+                                    datake++;
+                                    int m = j;
+                                    for (var n = i + 1; n < rows; n++)
+                                    {
+
+                                       var obj = GetButtonView(Datas, n, m);
+                                        await Task.Factory.StartNew(() => SetUsed(obj, ArahPanah.DiagonalToDownLeft));
+                                        if (obj.main.Content.ToString()== findtext.Substring(datake, 1))
+                                        {
+                                            sb.Add(obj);
+                                            datake++;
+
+                                        }
+                                        else
+                                        {
+                                            datake = 0;
+                                            ClearSelectedHelp(sb);
+                                            ClearItemHelp(obj);
+                                            break;
+
+                                        }
+                                        m--;
+
+                                        if (sb.Count== findtext.Length)
+                                        {
+                                            isComplete = true;
+                                            SetFounded(sb);
+                                            bl.Found();
+                                            break;
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+                            if (!isComplete)
+                            {
+                                //"Diagonal  Right to Left To Up : ";
+                                var l = Helper.FindOnesFromRightToLeft((new int[rows, columns]), i, j);
+                               
+                                if (l.FirstCount > findtext.Length)
+                                {
+                                    await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
+                                    sb.Add(startobj);
+                                    datake++;
+                                    int m = j + 1;
+
+                                    for (var n = i - 1; n < rows; n--)
+                                    {
+
+                                       var obj = GetButtonView(Datas, n, m);
+                                        await Task.Factory.StartNew(() => SetUsed(obj, ArahPanah.DiagonalToUpRight));
+                                        if (obj.main.Content.ToString()== findtext.Substring(datake, 1))
+                                        {
+                                            sb.Add(obj);
+                                            datake++;
+
+                                        }
+                                        else
+                                        {
+                                            datake = 0;
+                                            ClearSelectedHelp(sb);
+                                            ClearItemHelp(obj);
+                                            break;
+
+                                        }
+                                        m++;
+                                        
+
+                                        if (sb.Count == findtext.Length)
+                                        {
+                                            SetFounded(sb);
+                                            bl.Found();
+                                            isComplete = true;
+                                            break;
+                                        }
+
+                                    }
+                                }
+
+                            }
+                        }else
+                        {
+                            ClearItemHelp(startobj);
+                        }
+
+                        if (isComplete)
+                            break;
+
+
+
+
+
+
+                    }
+
+                    if (isComplete)
+                    {
+                        break;
+                    }
+                    Console.WriteLine("New Row");
+
+                }
+
+                if (!isComplete)
+                    isComplete = true;
+                else
+                {
+                   
+                }
+            }
+        }
+
+        private void ClearItemHelp(ButtonView item)
+        {
+           
+            item.LeftVisible = Visibility.Hidden;
+            item.RightVisible = Visibility.Hidden;
+            item.UpVisible = Visibility.Hidden;
+            item.UpRightVisible = Visibility.Hidden;
+            item.UpLeftVisible = Visibility.Hidden;
+            item.DownVisible = Visibility.Hidden;
+            item.DownLeftVisible = Visibility.Hidden;
+            item.DownRightVisible = Visibility.Hidden;
+            if (!item.IsFounded)
+            {
+                item.ClearUsed();
+            }
+        }
+
+        private void SetFounded(List<ButtonView> sb)
+        {
+           foreach(var item in sb)
+            {
+                item.IsFounded = true;
+            }
+        }
+
+        private void ClearSelectedHelp(List<ButtonView> sb)
+        {
+          foreach(var item in sb)
+            {
+                item.LeftVisible = Visibility.Hidden;
+                item.RightVisible = Visibility.Hidden;
+                item.UpVisible = Visibility.Hidden;
+                item.UpRightVisible = Visibility.Hidden;
+                item.UpLeftVisible = Visibility.Hidden;
+                item.DownVisible = Visibility.Hidden;
+                item.DownLeftVisible = Visibility.Hidden;
+                item.DownRightVisible = Visibility.Hidden;
+
+                if (!item.IsFounded)
+                {
+                    item.ClearUsed();
+                }
+            }
+            sb.Clear();
+        }
+
+        private void SetUsed(ButtonView item,ArahPanah arah)
+        {
+            item.SetArah(arah);
+            item.SetIsUsed(CurrentColor);
+            Thread.Sleep(500);
+
+        }
+
+        private ButtonView GetButtonView(IEnumerable<ButtonView> datas, int i, int j)
+        {
+            return datas.Where(O => O.Row == i && O.Column == j).FirstOrDefault();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            SolutionWithBackTractAsync();
         }
     }
 }

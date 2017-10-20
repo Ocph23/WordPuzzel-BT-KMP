@@ -14,4 +14,9 @@ namespace GameWordPuzzel
     {
         Horizontal, Vertical, Diagonal
     }
+
+    public enum ArahPanah
+    {
+        HorizontalToRight, HorizontalToLeft, VerticalToTop,VerticalToBottom, DiagonalToDownRight, DiagonalToDownLeft, DiagonalToUpRight, DiagonalToUpLeft
+    }
 }

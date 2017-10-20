@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GameWordPuzzel"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="232">
+             mc:Ignorable="d" Width="auto" Height="auto">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10*" />
@@ -16,7 +16,7 @@
             <RowDefinition Height="80*" />
             <RowDefinition Height="10*" />
         </Grid.RowDefinitions>
-        <Button Name="main" Grid.Row="1" Grid.Column="1" RenderTransformOrigin="0.5,0.5">
+        <Button Name="main"  Grid.Row="1" Grid.Column="1"   BorderBrush="{Binding BorderColor}" BorderThickness="{Binding BorderSize}" >
             <Button.Triggers>
                 <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                     <BeginStoryboard >
@@ -42,52 +42,76 @@
                 <SolidColorBrush Color="#FF7EF718" Opacity="0.53"/>
             </Button.Background>
         </Button>
-        <Canvas Visibility="{Binding UpVisible}" Name="arrowUp"  Grid.Row="0" Grid.Column="1">
+        <Canvas Visibility="{Binding UpVisible}" Name="arrowUp"  Grid.Row="0" Grid.Column="1" >
             <Canvas.Background>
                 <ImageBrush Stretch="Uniform" ImageSource="/GameWordPuzzel;component/Images/Up.png"/>
             </Canvas.Background>
         </Canvas>
-        <Canvas Visibility="{Binding DownVisible}" Name="arrowDown" Grid.Row="2"  Grid.Column="1" Margin="0,0,0,-15" >
+        <Canvas Visibility="{Binding DownVisible}" Name="arrowDown" Grid.Row="2"  Grid.Column="1"  >
             <Canvas.Background>
                 <ImageBrush ImageSource="/GameWordPuzzel;component/Images/Down.png" Stretch="Uniform"/>
             </Canvas.Background>
         </Canvas>
-        <Canvas Visibility="{Binding LeftVisible}" Name="arrowLeft" Grid.Row="1"  Grid.Column="0" Margin="-15,0,0,0">
+        <Canvas Visibility="{Binding LeftVisible}" Name="arrowLeft" Grid.Row="1"  Grid.Column="0" >
             <Canvas.Background>
                 <ImageBrush ImageSource="/GameWordPuzzel;component/Images/Left.png" Stretch="Uniform"/>
             </Canvas.Background>
         </Canvas>
-        <Canvas Visibility="{Binding RightVisible}" Name="arrowRight" Grid.Row="1"  Grid.Column="2" Margin="0,0,-15,0">
+        <Canvas Visibility="{Binding RightVisible}" Name="arrowRight" Grid.Row="1"  Grid.Column="2">
             <Canvas.Background>
                 <ImageBrush ImageSource="/GameWordPuzzel;component/Images/Right.png" Stretch="Uniform"/>
             </Canvas.Background>
         </Canvas>
-        <Canvas Visibility="{Binding DownRightVisible}" Name="arrowDownRight" Grid.Row="2"  Grid.Column="2">
-            <Canvas.Background>
-                <ImageBrush ImageSource="/GameWordPuzzel;component/Images/DownRight.png" Stretch="Uniform"/>
-            </Canvas.Background>
-        </Canvas>
-        <Canvas Visibility="{Binding DownLeftVisible}" Name="arrowDownLeft" Grid.Row="2"  Grid.Column="0">
-            <Canvas.Background>
-                <ImageBrush Stretch="Uniform" ImageSource="/GameWordPuzzel;component/Images/DownLeft.png"/>
-            </Canvas.Background>
-        </Canvas>
-        <Canvas Visibility="{Binding UpLeftVisible}" Name="arrowUpLeft" Grid.Row="0"  Grid.Column="0">
-            <Canvas.Background>
-                <ImageBrush Stretch="Uniform" ImageSource="/GameWordPuzzel;component/Images/UpLeft.png"/>
-            </Canvas.Background>
-        </Canvas>
-        <Canvas Visibility="{Binding UpRightVisible}" Name="arrowUpRight" Grid.Row="0"  Grid.Column="2" RenderTransformOrigin="0.5,0.5" Margin="2,-3,-6,185" Grid.RowSpan="2">
+        <Canvas Visibility="{Binding DownRightVisible}" Name="arrowDownRight" Grid.Row="2"  Grid.Column="2"  RenderTransformOrigin="0.5,0.5" >
             <Canvas.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
-                    <RotateTransform Angle="10.659"/>
+                    <RotateTransform Angle="-44.982"/>
                     <TranslateTransform/>
                 </TransformGroup>
             </Canvas.RenderTransform>
             <Canvas.Background>
-                <ImageBrush Stretch="Uniform" ImageSource="/GameWordPuzzel;component/Images/UpRight.png"/>
+                <ImageBrush ImageSource="/GameWordPuzzel;component/Images/Down.png"/>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas Visibility="{Binding DownLeftVisible}" Name="arrowDownLeft"  Grid.Row="2"  Grid.Column="0" RenderTransformOrigin="0.5,0.5">
+            <Canvas.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="46.408"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Canvas.RenderTransform>
+            <Canvas.Background>
+                <ImageBrush ImageSource="/GameWordPuzzel;component/Images/Down.png"/>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas Visibility="{Binding UpLeftVisible}" Name="arrowUpLeft" Grid.Row="0"  Grid.Column="0" RenderTransformOrigin="0.5,0.5">
+            <Canvas.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-46.628"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Canvas.RenderTransform>
+            <Canvas.Background>
+                <ImageBrush ImageSource="/GameWordPuzzel;component/Images/Up.png"/>
+            </Canvas.Background>
+        </Canvas>
+        <Canvas Visibility="{Binding UpRightVisible}" Name="arrowUpRight"  Grid.Column="2" Grid.Row="0" RenderTransformOrigin="0.5,0.5"  >
+            <Canvas.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="45"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Canvas.RenderTransform>
+            <Canvas.Background>
+                <ImageBrush ImageSource="/GameWordPuzzel;component/Images/Up.png"/>
             </Canvas.Background>
         </Canvas>
     </Grid>

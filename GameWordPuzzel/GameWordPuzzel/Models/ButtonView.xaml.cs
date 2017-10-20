@@ -30,10 +30,14 @@ namespace GameWordPuzzel.Models
         private Visibility _down;
         private Visibility _downleft;
         private Visibility _downright;
+        private Thickness _borderSize;
+        private Brush _borderColor= Brushes.Transparent;
+        private bool _isUsed;
 
-        public ButtonView()
+        public ButtonView(Cordinate maxrowcol)
         {
             InitializeComponent();
+            this.MaxRowCol = maxrowcol;
             this.DataContext = this;
             LeftVisible = Visibility.Hidden;
             RightVisible = Visibility.Hidden;
@@ -48,6 +52,37 @@ namespace GameWordPuzzel.Models
         public int Row { get; internal set; }
         public int Column { get; internal set; }
         public bool IsStarter { get; internal set; }
+
+        public Thickness BorderSize
+        {
+            get { return _borderSize; }
+            set
+            {
+                if(_borderSize!=value)
+                {
+                    _borderSize = value;
+                    OnNotifyPropertyChanged();
+                }
+            }
+        }
+
+
+        public Brush BorderColor
+        {
+            get
+            {
+                return _borderColor;
+            }
+            set
+            {
+                if(_borderColor!=value)
+                {
+                    _borderColor = value;
+                    OnNotifyPropertyChanged();
+                }
+            }
+        }
+
         public Visibility LeftVisible
         {
             get { return _left; }
@@ -55,8 +90,12 @@ namespace GameWordPuzzel.Models
             {
                 if (_left != value)
                 {
+                    if (value == Visibility.Visible && this.Column !=0)
+                    {
+                        value = Visibility.Hidden;
+                    }
                     _left = value;
-                    NotifyPropertyChanged();
+                    OnNotifyPropertyChanged();
                 }
             }
         }
@@ -68,8 +107,12 @@ namespace GameWordPuzzel.Models
             {
                 if (_right!= value)
                 {
-                    _right= value;
-                    NotifyPropertyChanged();
+                    if(value== Visibility.Visible && this.Column==MaxRowCol.Column-1)
+                    {
+                        value = Visibility.Hidden;
+                    }
+                    _right = value;
+                    OnNotifyPropertyChanged();
                 }
             }
         }
@@ -82,7 +125,7 @@ namespace GameWordPuzzel.Models
                 if (_up != value)
                 {
                     _up = value;
-                    NotifyPropertyChanged();
+                    OnNotifyPropertyChanged();
                 }
             }
         }
@@ -95,7 +138,7 @@ namespace GameWordPuzzel.Models
                 if (_upright != value)
                 {
                     _upright = value;
-                    NotifyPropertyChanged();
+                    OnNotifyPropertyChanged();
                 }
             }
         }
@@ -108,7 +151,7 @@ namespace GameWordPuzzel.Models
                 if (_upleft!= value)
                 {
                     _upleft= value;
-                    NotifyPropertyChanged();
+                    OnNotifyPropertyChanged();
                 }
             }
         }
@@ -121,7 +164,7 @@ namespace GameWordPuzzel.Models
                 if (_down != value)
                 {
                     _down = value;
-                    NotifyPropertyChanged();
+                    OnNotifyPropertyChanged();
                 }
             }
         }
@@ -134,7 +177,7 @@ namespace GameWordPuzzel.Models
                 if (_downleft != value)
                 {
                     _downleft = value;
-                    NotifyPropertyChanged();
+                    OnNotifyPropertyChanged();
                 }
             }
         }
@@ -147,12 +190,32 @@ namespace GameWordPuzzel.Models
                 if (_downright != value)
                 {
                     _downright = value;
-                    NotifyPropertyChanged();
+                    OnNotifyPropertyChanged();
                 }
             }
         }
 
-        public bool IsUsed { get; internal set; }
+        public bool IsUsed {
+            get
+            {
+                return _isUsed;
+            }
+            set
+            {
+                _isUsed = value;
+                OnNotifyPropertyChanged();
+            }
+        }
+
+        public bool IsFounded { get;  set; }
+        public Cordinate MaxRowCol { get; private set; }
+
+        public void SetIsUsed(Brush currentColor)
+        {
+            this.BorderSize= new Thickness(10);
+            this.BorderColor = currentColor;
+
+        }
 
         
 
@@ -173,7 +236,7 @@ namespace GameWordPuzzel.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        private void OnNotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
             {
@@ -181,8 +244,44 @@ namespace GameWordPuzzel.Models
             }
         }
 
+        internal void ClearUsed()
+        {
+            this.BorderSize = new Thickness(0);
+            this.BorderColor = Brushes.Transparent;
+        }
 
+        internal void SetArah(ArahPanah arah)
+        {
+            switch (arah)
+            {
 
-
+                case ArahPanah.HorizontalToRight:
+                    RightVisible = Visibility.Visible;
+                    break;
+                case ArahPanah.HorizontalToLeft:
+                    LeftVisible = Visibility.Visible;
+                    break;
+                case ArahPanah.VerticalToTop:
+                    UpVisible = Visibility.Visible;
+                    break;
+                case ArahPanah.VerticalToBottom:
+                    DownVisible = Visibility.Visible;
+                    break;
+                case ArahPanah.DiagonalToDownRight:
+                    DownRightVisible = Visibility.Visible;
+                    break;
+                case ArahPanah.DiagonalToDownLeft:
+                    DownLeftVisible = Visibility.Visible;
+                    break;
+                case ArahPanah.DiagonalToUpRight:
+                    UpRightVisible = Visibility.Visible;
+                    break;
+                case ArahPanah.DiagonalToUpLeft:
+                    UpLeftVisible = Visibility.Visible;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

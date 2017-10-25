@@ -217,18 +217,6 @@ namespace GameWordPuzzel.Models
 
         }
 
-        
-
-        public void GoUp()
-        {
-            UpVisible = Visibility.Visible;
-        }
-
-        protected override void OnDragOver(DragEventArgs e)
-        {
-            base.OnDragOver(e);
-        }
-
         internal void ShowLeft()
         {
             LeftVisible = Visibility.Visible;

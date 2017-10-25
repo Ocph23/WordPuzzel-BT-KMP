@@ -18,7 +18,21 @@ namespace GameWordPuzzel
             return list.ElementAt(new Random(DateTime.Now.Millisecond).Next(list.Count()));
         }
 
+        public static List<E> ShuffleList<E>(List<E> inputList)
+        {
+            List<E> randomList = new List<E>();
 
+            Random r = new Random();
+            int randomIndex = 0;
+            while (inputList.Count > 0)
+            {
+                randomIndex = r.Next(0, inputList.Count); //Choose a random object in the list
+                randomList.Add(inputList[randomIndex]); //add it to the new, random list
+                inputList.RemoveAt(randomIndex); //remove to avoid duplicates
+            }
+
+            return randomList; //return the new random list
+        }
         public static Diagonal FindOnesFromLeftToRight(int[,] matrix,int row, int col)
         {
             int rows = matrix.GetLength(0);
@@ -40,11 +54,11 @@ namespace GameWordPuzzel
                 Number = max
             };
 
-            while ((i > 0 && i < rows) && (j > 0 && j < columns))
+            while ((i >= 0 && i < rows) && (j >= 0 && j < columns))
             {
-                i = i - 1;
+                i --;
                 da.RowStart = i;
-                j = j - 1;
+                j --;
                 da.CollStart = j;
                 da.FirstCount++;
             }
@@ -97,11 +111,11 @@ namespace GameWordPuzzel
                 Number = max
             };
 
-            while ((i > 0 && i < rows) && (j > 0 && j < columns))
+            while ((i >= 0 && i < rows) && (j >= 0 && j < columns))
             {
-                i = i - 1;
+                i --;
                 da.RowStart = i;
-                j = j + 1;
+                j ++;
                 da.CollStart = j;
                 da.FirstCount++;
             }

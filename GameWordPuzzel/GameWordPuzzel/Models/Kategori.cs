@@ -9,16 +9,33 @@ namespace GameWordPuzzel.Models
 {
 
    [TableName("Kategori")]
-   public class Kategori
+   public class Kategori:DAL.BaseNotifyProperty
     {
+        private int? _id;
+        private string _name;
+
         [PrimaryKey("Id")]
         [DbColumn("Id")]
-        public int Id { get; set; }
+        public int? Id {
+            get { return _id; }
+            set
+            {
+                _id = value;
+                OnPropertyChanged();
+            }
+        }
 
         [DbColumn("Name")]
-        public string Name { get; set; }
+        public string Name {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
 
 
-        public List<Kata> DaftarKata { get; set; }
+        public List<Kata> Words { get; set; }
     }
 }

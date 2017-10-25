@@ -31,32 +31,39 @@ namespace GameWordPuzzel.Views
 
             using (var db = new OcphDbContext())
             {
-                var katas = db.Categories.Insert(new Kategori { Id = 0, Name = "Music" });
-            }
+                var cats = db.Categories.Select().ToList();
+                foreach(var item in cats)
+                {
+                    item.Words = db.Words.Where(O => O.KategoriId == item.Id).ToList();
+                }
+                this.Kategories = new ObservableCollection<Kategori>(cats);
+                
+                this.KategoriesView = (CollectionView)CollectionViewSource.GetDefaultView(Kategories);
+                this.Daftar = new ObservableCollection<Kata>();
+                this.DaftarView = (CollectionView)CollectionViewSource.GetDefaultView(Daftar);
+                this.DataContext = this;
 
+            }
+            /*
 
             var list = new List<Kategori>();
             var kategori1 = new Kategori { Id = 1, Name = "Music" };
-            kategori1.DaftarKata = new List<Kata>();
-            kategori1.DaftarKata.Add(new Kata { Id = 1, KategoriId = kategori1.Id, Value = "POP" });
-            kategori1.DaftarKata.Add(new Kata { Id = 2, KategoriId = kategori1.Id, Value = "DANGDUT" });
-            kategori1.DaftarKata.Add(new Kata { Id = 3, KategoriId = kategori1.Id, Value = "ROCK" });
-            kategori1.DaftarKata.Add(new Kata { Id = 4, KategoriId = kategori1.Id, Value = "KERONCONG" });
+            kategori1.Words = new List<Kata>();
+            kategori1.Words.Add(new Kata { Id = 1, KategoriId = kategori1.Id, Nilai = "POP" });
+            kategori1.Words.Add(new Kata { Id = 2, KategoriId = kategori1.Id, Nilai = "DANGDUT" });
+            kategori1.Words.Add(new Kata { Id = 3, KategoriId = kategori1.Id, Nilai = "ROCK" });
+            kategori1.Words.Add(new Kata { Id = 4, KategoriId = kategori1.Id, Nilai = "KERONCONG" });
             list.Add(kategori1);
 
             var kategori2 = new Kategori { Id = 2, Name = "EKONOMI" };
-            kategori2.DaftarKata = new List<Kata>();
-            kategori2.DaftarKata.Add(new Kata { Id = 1, KategoriId = kategori2.Id, Value = "MONETER" });
-            kategori2.DaftarKata.Add(new Kata { Id = 2, KategoriId = kategori2.Id, Value = "KREDIT" });
-            kategori2.DaftarKata.Add(new Kata { Id = 3, KategoriId = kategori2.Id, Value = "DEBET" });
-            kategori2.DaftarKata.Add(new Kata { Id = 4, KategoriId = kategori2.Id, Value = "AKUNTANSI" });
+            kategori2.Words = new List<Kata>();
+            kategori2.Words.Add(new Kata { Id = 1, KategoriId = kategori2.Id, Nilai = "MONETER" });
+            kategori2.Words.Add(new Kata { Id = 2, KategoriId = kategori2.Id, Nilai = "KREDIT" });
+            kategori2.Words.Add(new Kata { Id = 3, KategoriId = kategori2.Id, Nilai = "DEBET" });
+            kategori2.Words.Add(new Kata { Id = 4, KategoriId = kategori2.Id, Nilai = "AKUNTANSI" });
             list.Add(kategori2);
-
-            this.Kategories = new ObservableCollection<Kategori>(list);
-            this.Daftar = new ObservableCollection<Kata>();
-            this.KategoriesView = (CollectionView)CollectionViewSource.GetDefaultView(Kategories);
-            this.DaftarView = (CollectionView)CollectionViewSource.GetDefaultView(Daftar);
-            this.DataContext = this;
+            */
+            
 
           
 
@@ -64,6 +71,11 @@ namespace GameWordPuzzel.Views
         }
 
 
+      
+        public ObservableCollection<Kategori> Kategories { get; private set; }
+        public ObservableCollection<Kata> Daftar { get; private set; }
+        public CollectionView KategoriesView { get; set; }
+        public CollectionView DaftarView { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -73,10 +85,6 @@ namespace GameWordPuzzel.Views
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-        public ObservableCollection<Kategori> Kategories { get; private set; }
-        public ObservableCollection<Kata> Daftar { get; private set; }
-        public CollectionView KategoriesView { get; set; }
-        public CollectionView DaftarView { get; set; }
         public Kategori CategorySelected {
             get { return _selectedCategories; }
             set
@@ -85,7 +93,10 @@ namespace GameWordPuzzel.Views
                 {
                     _selectedCategories = value;
                     Daftar.Clear();
-                    foreach(var item in value.DaftarKata)
+                    if (value.Words == null)
+                        value.Words = new List<Kata>();
+
+                    foreach(var item in value.Words)
                     {
                         Daftar.Add(item);
                     }
@@ -107,7 +118,17 @@ namespace GameWordPuzzel.Views
             var textBox = (TextBox)sender;
             if(textBox.Text!=string.Empty && CategorySelected!=null)
             {
-                Daftar.Add(new Kata { Id = 8, KategoriId = CategorySelected.Id, Value = textBox.Text.ToUpper() });
+                var text = textBox.Text.Trim().ToUpper();
+                using (var db = new OcphDbContext())
+                {
+                    var newKata = new Kata { KategoriId = CategorySelected.Id.Value, Nilai = text };
+                    newKata.Id = db.Words.InsertAndGetLastID(newKata);
+                    if(newKata.Id>0)
+                    {
+                        Daftar.Add(newKata);
+                    }
+                }
+              
                 textBox.Text = string.Empty;
                 DaftarView.Refresh();
             }
@@ -134,6 +155,25 @@ namespace GameWordPuzzel.Views
             this.Close();
         }
 
+        private void addkategori_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            if (textBox.Text != string.Empty)
+            {
+                var text = textBox.Text.Trim().ToUpper();
+                using (var db = new OcphDbContext())
+                {
+                    var newCat = new Kategori { Name = text };
+                    newCat.Id = db.Categories.InsertAndGetLastID(newCat);
+                    if (newCat.Id > 0)
+                    {
+                        Kategories.Add(newCat);
+                    }
+                }
+                textBox.Text = string.Empty;
+                KategoriesView.Refresh();
+            }
 
+        }
     }
 }

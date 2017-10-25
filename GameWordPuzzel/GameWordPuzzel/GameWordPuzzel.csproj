@@ -37,6 +37,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -72,18 +73,38 @@
     <Compile Include="Models\Diagonal.cs" />
     <Compile Include="Models\Kata.cs" />
     <Compile Include="Models\Kategori.cs" />
+    <Compile Include="Models\Option.cs" />
+    <Compile Include="Models\Soal.cs" />
     <Compile Include="OcphDbContext.cs" />
+    <Compile Include="UserControl1.xaml.cs">
+      <DependentUpon>UserControl1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddNewSoal.xaml.cs">
+      <DependentUpon>AddNewSoal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AdminAddSoal.xaml.cs">
+      <DependentUpon>AdminAddSoal.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AdminPage.xaml.cs">
       <DependentUpon>AdminPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DataKataView.xaml.cs">
       <DependentUpon>DataKataView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DialogBox.xaml.cs">
+      <DependentUpon>DialogBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GameBoard.xaml.cs">
       <DependentUpon>GameBoard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\IconView.xaml.cs">
+      <DependentUpon>IconView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\QuizView.xaml.cs">
+      <DependentUpon>QuizView.xaml</DependentUpon>
     </Compile>
     <Page Include="LabelView.xaml">
       <SubType>Designer</SubType>
@@ -105,6 +126,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="mystyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControl1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AddNewSoal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AdminAddSoal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AdminPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -113,11 +150,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\DialogBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\GameBoard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\IconView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\LoginView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\QuizView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -173,6 +222,34 @@
       <Project>{b80cefb7-fb32-4c32-9fbf-1f0ad7dd2863}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\User_Circle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\blue-squares-wallpaper-1857-2006-hd-wallpapers.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-About.png" />
+    <Resource Include="Images\icons8-Add.png" />
+    <Resource Include="Images\icons8-Back To.png" />
+    <Resource Include="Images\icons8-Blade.png" />
+    <Resource Include="Images\icons8-Cancel.png" />
+    <Resource Include="Images\icons8-Close Window.png" />
+    <Resource Include="Images\icons8-Database Administrator.png" />
+    <Resource Include="Images\icons8-Delete.png" />
+    <Resource Include="Images\icons8-Edit.png" />
+    <Resource Include="Images\icons8-Exit Sign.png" />
+    <Resource Include="Images\icons8-List.png" />
+    <Resource Include="Images\icons8-More Info.png" />
+    <Resource Include="Images\icons8-Presentation.png" />
+    <Resource Include="Images\icons8-Puzzle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-Books-96.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

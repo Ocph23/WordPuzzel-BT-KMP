@@ -5,8 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameWordPuzzel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="421.281" Width="619.508">
-    <Grid>
+        Title="MainWindow" Height="421.281" Width="619.508" WindowStyle="None" WindowState="Maximized">
+
+    <Window.Background>
+        <ImageBrush ImageSource="Images/blue-squares-wallpaper-1857-2006-hd-wallpapers.jpg"/>
+    </Window.Background>
+    <Grid >
+        <Grid.Background>
+            <SolidColorBrush Color="#00171F" Opacity="0.5"></SolidColorBrush>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
@@ -17,49 +24,125 @@
 
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="158*" />
-            <RowDefinition Height="93*" />
-            <RowDefinition Height="93*" />
-            <RowDefinition Height="46*" />
+            <RowDefinition Height="30*" />
+            <RowDefinition Height="30*" />
+            <RowDefinition Height="30*" />
+            <RowDefinition Height="10*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.ColumnSpan="5" Margin="10,14,10,18" VerticalAlignment="Center" Height="126">
-            <TextBlock HorizontalAlignment="Center" Text="APLIKASI PEMBELAJARAN" FontSize="22" FontWeight="Bold">
+        <StackPanel Grid.ColumnSpan="5" Margin="10,2,10,3" VerticalAlignment="Center" Height="126">
+            <TextBlock HorizontalAlignment="Center" Text="APLIKASI PEMBELAJARAN" FontSize="30" FontWeight="Bold">
                 <TextBlock.Foreground>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF339129" Offset="0"/>
-                        <GradientStop Color="#FF2E442A" Offset="1"/>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FF3C5EFF" Offset="1"/>
+                        <GradientStop Color="#FFB12BFF"/>
+                        <GradientStop Color="#FFF3DFFF" Offset="0.517"/>
                     </LinearGradientBrush>
                 </TextBlock.Foreground></TextBlock>
-            <TextBlock HorizontalAlignment="Center" Text="ALGORITMA BACKTRACKING DAN KNUT-MORRIS-PRATT" FontSize="22" FontWeight="Bold">
+            <TextBlock HorizontalAlignment="Center" Text="ALGORITMA BACKTRACKING DAN KNUT-MORRIS-PRATT" FontSize="25" FontWeight="Bold">
                 <TextBlock.Foreground>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF339129" Offset="0"/>
-                        <GradientStop Color="#FF2E442A" Offset="1"/>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FF3C5EFF" Offset="1"/>
+                        <GradientStop Color="#FFB12BFF"/>
+                        <GradientStop Color="#FFF3DFFF" Offset="0.517"/>
                     </LinearGradientBrush>
                 </TextBlock.Foreground></TextBlock>
-            <TextBlock Margin="20" HorizontalAlignment="Center" Text="MENU UTAMA" FontSize="22" FontWeight="Bold">
+            <TextBlock Margin="5" HorizontalAlignment="Center" Text="MENU UTAMA" FontSize="35" FontWeight="Bold">
                 <TextBlock.Foreground>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF339129" Offset="0"/>
-                        <GradientStop Color="#FF2E442A" Offset="1"/>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FF3C5EFF" Offset="1"/>
+                        <GradientStop Color="#FFB12BFF"/>
+                        <GradientStop Color="#FFF3DFFF" Offset="0.517"/>
                     </LinearGradientBrush>
                 </TextBlock.Foreground></TextBlock>
         </StackPanel>
+        <StackPanel>
 
-        <Button Name="btnGame" Click="btnGame_Click" Margin="5" Content="Game" Grid.Row="1" Grid.Column="1" BorderBrush="Aquamarine" FontSize="36" >
+        </StackPanel>
+
+        <Button Name="btnGame"  Click="btnGame_Click" Margin="5" Content="Game" Grid.Row="1" Grid.Column="1"    Style="{DynamicResource ButtonIcon1}" >
             <Button.Background>
-                <ImageBrush ImageSource="Images/magical-castle-background.png"/>
+                <ImageBrush  ImageSource="Images/icons8-Puzzle.png" Stretch="Uniform">
+                    <ImageBrush.Transform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform Y="-12"/>
+                        </TransformGroup>
+                    </ImageBrush.Transform>
+                </ImageBrush>
             </Button.Background>
         </Button>
-        <Button Margin="5" Content="Materi" Grid.Row="1" Grid.Column="2" >
+        <Button Style="{DynamicResource ButtonIcon1}"  Content="Materi" Grid.Row="1" Grid.Column="2" >
             <Button.Background>
-                <ImageBrush ImageSource="Images/cartoons-background-006.jpg"/>
+                <ImageBrush ImageSource="Images/icons8-Presentation.png" Stretch="Uniform">
+                    <ImageBrush.Transform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform Y="-12"/>
+                        </TransformGroup>
+                    </ImageBrush.Transform>
+                </ImageBrush>
             </Button.Background>
         </Button>
-        <Button Margin="5" Content="Kuis" Grid.Row="1" Grid.Column="3" ></Button>
-        <Button Name="btnadmin" Margin="5" Content="Admin" Grid.Row="2" Grid.Column="1" BorderBrush="{x:Null}" Click="btnadmin_Click" ></Button>
-        <Button Margin="5" Content="About" Grid.Row="2" Grid.Column="2" BorderBrush="{x:Null}" ></Button>
-        <Button Margin="5" Content="Exit" Grid.Row="2" Grid.Column="3" ></Button>
+        <Button Name="kuis" Click="kuis_Click" Content="Kuis" Grid.Row="1" Grid.Column="3" Style="{DynamicResource  ButtonIcon1}" >
+            <Button.Background>
+                <ImageBrush ImageSource="Images/icons8-List.png" Stretch="Uniform">
+                    <ImageBrush.Transform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform Y="-12"/>
+                        </TransformGroup>
+                    </ImageBrush.Transform>
+                </ImageBrush>
+            </Button.Background>
+        </Button>
+        <Button Style="{DynamicResource  ButtonIcon1}" Name="btnadmin"  Content="Admin" Grid.Row="2" Grid.Column="1" Click="btnadmin_Click" >
+            <Button.Background>
+                <ImageBrush ImageSource="Images/icons8-Database Administrator.png" Stretch="Uniform">
+                    <ImageBrush.Transform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform Y="-12"/>
+                        </TransformGroup>
+                    </ImageBrush.Transform>
+                </ImageBrush>
+            </Button.Background>
+        </Button>
+        <Button Style="{DynamicResource  ButtonIcon1}" Margin="5" Content="About" Grid.Row="2" Grid.Column="2" BorderBrush="{x:Null}" >
+            <Button.Background>
+                <ImageBrush ImageSource="Images/icons8-About.png" Stretch="Uniform">
+                    <ImageBrush.Transform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform Y="-12"/>
+                        </TransformGroup>
+                    </ImageBrush.Transform>
+                </ImageBrush>
+            </Button.Background>
+        </Button>
+        <Button Name="exit" Click="exit_Click" Style="{DynamicResource  ButtonIcon1}" Margin="5" Content="Exit" Grid.Row="2" Grid.Column="3" >
+            <Button.Background>
+                <ImageBrush ImageSource="Images/icons8-Exit Sign.png" Stretch="Uniform">
+                    <ImageBrush.Transform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform Y="-12"/>
+                        </TransformGroup>
+                    </ImageBrush.Transform>
+                </ImageBrush>
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>

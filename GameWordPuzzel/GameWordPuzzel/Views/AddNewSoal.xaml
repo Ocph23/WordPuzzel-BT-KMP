@@ -1,0 +1,61 @@
+﻿<Window x:Class="GameWordPuzzel.Views.AddNewSoal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameWordPuzzel.Views"
+        mc:Ignorable="d"
+        Title="Tambah Soal Baru" Height="414.649" Width="685.871"  Background="#00171F" >
+    <Window.Resources>
+        <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" >
+                <Setter.Value>
+                    <SolidColorBrush Color="#FFB9B3B3" Opacity="0.135"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="Wheat" />
+            <Setter Property="BorderThickness" Value="0.5" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="61"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0"  >
+            <Label Content="Soal" FontSize="16" Margin="10,10,10,0" Foreground="White"></Label>
+            <TextBox Name="soalTxt" MinHeight="45" FontSize="16" TextWrapping="Wrap" Margin="10,0" Background="{x:Null}" Foreground="White" CaretBrush="White" ></TextBox>
+            <DataGrid Name="lb" ColumnHeaderStyle="{StaticResource HeaderStyle}"  MinRowHeight="35" FontSize="16"  RowBackground="{x:Null}" ItemsSource="{Binding Options, Mode=TwoWay}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="10" BorderBrush="#FFB0B0B0" Background="{x:Null}" Foreground="White" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn  Header="Pilihan" Width="85*" Binding="{Binding Value}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                                <Setter Property="TextBlock.Margin" Value="5"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridCheckBoxColumn Header="Benar" Width="15*" Binding="{Binding IsTrueAnswer}"/>
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5"  Grid.Row="1" >
+            <Button Name="simpan" Click="simpan_Click" Margin="3" Width="75" Content="Simpan" FontSize="16" Style="{StaticResource ButtonStyle1}" />
+            <Button Name="batal" Click="batal_Click" Margin="3" Width="75" Content="Batal" FontSize="16" Style="{StaticResource ButtonStyle1}" />
+        </StackPanel>
+
+
+
+
+    </Grid>
+</Window>

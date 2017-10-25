@@ -7,6 +7,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <Label Content="Label" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" Foreground="#FF9E8181" Background="#FFCF7070"></Label>
+        <Label Content="Label" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" Foreground="White">
+            <Label.Background>
+                <SolidColorBrush Color="#FF054853" Opacity="0.2"/>
+            </Label.Background>
+        </Label>
     </Grid>
 </UserControl>

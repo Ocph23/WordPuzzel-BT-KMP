@@ -32,14 +32,23 @@ namespace GameWordPuzzel
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Kategori (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR(100))";
                 IDataReader reader = cmd.ExecuteReader();
                 reader.Close();
-                
-
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Katas (Id INTEGER PRIMARY KEY AUTOINCREMENT, KategoriId Integer(11), Nilai VARCHAR(100) )";
+                reader = cmd.ExecuteReader();
+                reader.Close();
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Soal (Id INTEGER PRIMARY KEY AUTOINCREMENT, Value Text, Level VARCHAR(100) )";
+                reader = cmd.ExecuteReader();
+                reader.Close();
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Pilihan (Id INTEGER PRIMARY KEY AUTOINCREMENT, SoalId Integer(11), Value Text, IsTrue VARCHAR(100) )";
+                reader = cmd.ExecuteReader();
+                reader.Close();
             }
 
         }
 
         public IRepository<Kategori> Categories { get { return new Repository<Kategori>(this); } }
         public IRepository<Kata> Words { get { return new Repository<Kata>(this); } }
+        public IRepository<Soal> Soals { get { return new Repository<Soal>(this); } }
+        public IRepository<Option> Options { get { return new Repository<Option>(this); } }
 
         internal void IsExist<T>()
         {

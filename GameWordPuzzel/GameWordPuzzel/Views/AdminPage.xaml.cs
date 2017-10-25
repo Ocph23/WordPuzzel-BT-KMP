@@ -38,5 +38,11 @@ namespace GameWordPuzzel.Views
             mainWindow.Show();
             this.Close();
         }
+
+        private void soal_Click(object sender, RoutedEventArgs e)
+        {
+            var form = new Views.AdminAddSoal();
+            form.ShowDialog();
+        }
     }
 }

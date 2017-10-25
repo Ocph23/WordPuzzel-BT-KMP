@@ -1,8 +1,11 @@
 ﻿using GameWordPuzzel.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,19 +23,26 @@ namespace GameWordPuzzel.Views
     /// <summary>
     /// Interaction logic for GameBoard.xaml
     /// </summary>
-    public partial class GameBoard : Window
+    public partial class GameBoard : Window,INotifyPropertyChanged
     {
-        public GameBoard()
+        public GameBoard(MainWindow main, Cordinate cordinate)
         {
             InitializeComponent();
             this.Loaded += GameBoard_Loaded;
+            this.DataContext = this;
+            this.main = main;
+            this.columns = cordinate.Column;
+            this.rows = cordinate.Row;
         }
 
         public List<string> DataSource { get; private set; }
         public bool Start { get; private set; }
         public List<ButtonView> ListSelected { get; private set; }
         public Brush CurrentColor { get; private set; }
-       // public List<string> ListResult { get;  set; }
+        public int SleepTime { get; private set; }
+        public ObservableCollection<Kategori> Kategories { get;  set; }
+
+        // public List<string> ListResult { get;  set; }
         private List<string> NotAccepted = new List<string>();
 
         private Random random = new Random();
@@ -40,41 +50,68 @@ namespace GameWordPuzzel.Views
         private Random rarah = new Random();
         private int columns;
         private int rows;
+        private Kategori _selectedCategories;
+        private MainWindow main;
 
         private void GameBoard_Loaded(object sender, RoutedEventArgs e)
         {
+            DataSource = new List<string>();
+            using (var db = new OcphDbContext())
+            {
+                var cats = db.Categories.Select().ToList();
+                foreach (var item in cats)
+                {
+                    item.Words = db.Words.Where(O => O.KategoriId == item.Id).ToList();
+                }
+                this.Kategories = new ObservableCollection<Kategori>(cats);
+                this.combo.ItemsSource = Kategories;
+            }
+
             this.RefreshBoard();
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        public Kategori CategorySelected
+        {
+            get { return _selectedCategories; }
+            set
+            {
+                if (_selectedCategories != value)
+                {
+                    _selectedCategories = value;
+                    DataSource.Clear();
+                    if (value.Words == null)
+                        value.Words = new List<Kata>();
+
+                    foreach (var item in value.Words.Where(O=>O.Nilai.Length<=columns))
+                    {
+                       DataSource.Add(item.Nilai);
+                    }
+
+                    RefreshBoard();
+
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         private void RefreshBoard()
         {
-            var x =10;
-            this.columns = x;
-            this.rows = x;
-            DataSource = new List<string>();
-            DataSource.Add("MAKANAN");
-            DataSource.Add("MINUM");
-            DataSource.Add("TIDUR");
-            DataSource.Add("KERJASAMA");
-            DataSource.Add("JALAN");
-            DataSource.Add("WISATA");
-            DataSource.Add("QUIZ");
-            DataSource.Add("SERAKAH");
-            DataSource.Add("KEHIDUPAN");
-            DataSource.Add("MUSIK");
-            DataSource.Add("BIOLA");
 
-            var datas = new List<string>();
-            //ListResult = new List<string>();
+            console.Document.Blocks.Clear();
+            var datas = Helper.ShuffleList<string>(DataSource).Take(columns+columns/2);
             dataToSearchView.Children.Clear();
             canvas.Children.Clear();
             canvas.ColumnDefinitions.Clear();
             canvas.RowDefinitions.Clear();
-            foreach (var item in this.DataSource)
-            {
-                datas.Add(item);
-     
-            }
+            
 
             for (int i = 0; i < rows; i++)
             {
@@ -90,7 +127,7 @@ namespace GameWordPuzzel.Views
             {
                 for (var j = 0; j < canvas.ColumnDefinitions.Count; j++)
                 {
-                    var button = new ButtonView(new Cordinate(this.columns,this.rows)) { FontSize = 30-x, Row = i, Column = j, Name = string.Format("R{0}C{1}", i, j) };
+                    var button = new ButtonView(new Cordinate(this.columns,this.rows)) { FontSize = 30-columns, Row = i, Column = j, Name = string.Format("R{0}C{1}", i, j) };
                     button.main.Content = Helper.RandomString(random);
                     button.MouseEnter += Button_MouseEnter; ;
                     button.main.Click += Main_Click;
@@ -99,6 +136,22 @@ namespace GameWordPuzzel.Views
                     this.canvas.Children.Add(button);
                 }
             }
+
+            /*
+             Percobaan
+             */
+            var test = "KAKIKIKIRBNONOBOYO";
+            DataPosition dp = new DataPosition();
+            foreach (ButtonView btn in canvas.Children)
+            {
+                if (btn.Row == 0)
+                {
+                    btn.main.Content = test.Substring(btn.Column, 1);
+                    dp.AddButton(btn);
+                    SetObjectColorAndUsed(btn);
+                }
+            }
+            dataToSearchView.Children.Add(new BorderLabel("KIKIR"));
 
             //Random text
             CurrentColor = Brushes.Red;
@@ -119,10 +172,12 @@ namespace GameWordPuzzel.Views
                         if (arah == Arah.Horizontal)
                         {
                             data = HorizontalPlace(item, row, col);
+                          
                         }
                         else if (arah == Arah.Vertical)
                         {
                             data = VerticalPlace(item, row, col);
+                           
 
                         }
                         else if (arah == Arah.Diagonal)
@@ -407,8 +462,9 @@ namespace GameWordPuzzel.Views
                                         index += 1;
                                     }
                                 }
-                                Debug.WriteLine(string.Format("{0} From LRC IF in col {1} and row {2}", item, col, row));
+                                
                                 completed = true;
+                                console.AppendText(string.Format("{0} from {1}\r", item, ArahPanah.DiagonalToDownRight));
 
                             }
                         }
@@ -488,7 +544,7 @@ namespace GameWordPuzzel.Views
                                     }
                                 }
                                 completed = true;
-                                Debug.WriteLine(string.Format("{0} From LRC ELSE IF in col {1} and row {2}", item, col, row));
+                                console.AppendText(string.Format("{0} from {1}\r", item, ArahPanah.DiagonalToUpLeft));
                             }
 
                         }
@@ -566,7 +622,7 @@ namespace GameWordPuzzel.Views
                                     }
                                 }
                                 completed = true;
-                                Debug.WriteLine(string.Format("{0} From LRC ELSE in col {1} and row {2}", item, col, row));
+                                console.AppendText(string.Format("{0} from {1}\r", item,"LR"));
                             }
 
                         }
@@ -650,7 +706,7 @@ namespace GameWordPuzzel.Views
                                     }
                                 }
                                 completed = true;
-                                Debug.WriteLine(string.Format("{0} From RLC IF in col {1} and row {2}", item, col, row));
+                                console.AppendText(string.Format("{0} from {1}\r", item, ArahPanah.DiagonalToDownLeft));
                             }
 
 
@@ -730,7 +786,7 @@ namespace GameWordPuzzel.Views
                                     }
                                 }
                                 completed = true;
-                                Debug.WriteLine(string.Format("{0} From RLC Else IF in col {1} and row {2}", item, col, row));
+                                console.AppendText(string.Format("{0} from {1}\r", item, ArahPanah.DiagonalToUpRight));
                             }
 
                         }
@@ -808,14 +864,13 @@ namespace GameWordPuzzel.Views
                                         index += 1;
                                     }
                                 }
-                                Debug.WriteLine(string.Format("{0} From RLC Else in col {1} and row {2}", item, col, row));
+                                console.AppendText(string.Format("{0} from {1}\r", item,"Rl Normal"));
                                 completed = true;
                             }
 
                         }
                         catch (Exception ex)
                         {
-                            Debug.WriteLine(string.Format("{0} From RLC Else", ex.Message));
                             error++;
                             if (error <= rows)
                             {
@@ -839,9 +894,10 @@ namespace GameWordPuzzel.Views
             }
             else
             {
+                dataposition = null;
                 NotAccepted.Add(item);
-               // Debug.WriteLine("{0} Not Implement Diagonal", item);
-               
+                console.AppendText(string.Format("{0} from {1} \r", item,"Normal Not Acceptable"));
+
 
             }
             return dataposition;
@@ -892,6 +948,7 @@ namespace GameWordPuzzel.Views
                             }
                         }
                         completed = true;
+                        console.AppendText(string.Format("{0} from {1}\r", item, ArahPanah.VerticalToBottom));
 
                     }
                     catch (Exception)
@@ -915,7 +972,7 @@ namespace GameWordPuzzel.Views
 
 
             }
-            else if (row - item.Length >= 0)
+            else if ((row+1) - item.Length >= 0)
             {
                 bool completed = false;
                 int error = 0;
@@ -962,6 +1019,7 @@ namespace GameWordPuzzel.Views
                             }
                         }
                         completed = true;
+                        console.AppendText(string.Format("{0} from {1}\r", item, ArahPanah.VerticalToTop));
                     }
                     catch (Exception)
                     {
@@ -1026,6 +1084,7 @@ namespace GameWordPuzzel.Views
                             }
                         }
                         completed = true;
+                        console.AppendText(string.Format("{0} from {1}\r", item,"Vertical Normal"));
                     }
                     catch (Exception)
                     {
@@ -1095,6 +1154,8 @@ namespace GameWordPuzzel.Views
                                 index++;
                             }
                             completed = true;
+                            console.AppendText(string.Format("{0} from {1}\r",item,ArahPanah.HorizontalToRight));
+
                         }else
                         {
                             NotAccepted.Add(item);
@@ -1169,6 +1230,7 @@ namespace GameWordPuzzel.Views
                             }
                         }
                         completed = true;
+                        console.AppendText(string.Format("{0} from {1}\r", item, ArahPanah.HorizontalToLeft));
                     }
                     catch (Exception ex)
                     {
@@ -1237,6 +1299,7 @@ namespace GameWordPuzzel.Views
                             }
                         }
                         completed = true;
+                        console.AppendText(string.Format("{0} from {1}\r", item, "Horizontal Normal"));
                     }
                     catch (Exception)
                     {
@@ -1250,6 +1313,7 @@ namespace GameWordPuzzel.Views
                         }
                         else
                         {
+                            completed = true;
                             NotAccepted.Add(item);
                         }
                     }
@@ -1263,7 +1327,7 @@ namespace GameWordPuzzel.Views
 
         private void SetObjectColorAndUsed(ButtonView btn)
         {
-          //  btn.main.Background = CurrentColor;
+            //btn.main.Background = CurrentColor;
             btn.IsUsed = true;
         }
 
@@ -1326,7 +1390,7 @@ namespace GameWordPuzzel.Views
                                         else
                                         {
                                             datake = 0;
-                                            ClearSelectedHelp(sb);
+                                            ClearSelectedBT(sb);
                                             ClearItemHelp(obj);
                                             break;
 
@@ -1364,7 +1428,7 @@ namespace GameWordPuzzel.Views
                                         {
                                             datake = 0;
                                             
-                                            ClearSelectedHelp(sb);
+                                            ClearSelectedBT(sb);
                                             ClearItemHelp(obj);
                                             break;
 
@@ -1402,7 +1466,7 @@ namespace GameWordPuzzel.Views
                                         else
                                         {
                                             datake = 0;
-                                            ClearSelectedHelp(sb);
+                                            ClearSelectedBT(sb);
                                             ClearItemHelp(obj);
                                             break;
 
@@ -1418,6 +1482,7 @@ namespace GameWordPuzzel.Views
                                 }
 
                             }
+
                             if (!isComplete)
                             {
                                 //"FInd Vertical To TOP : ";
@@ -1439,7 +1504,7 @@ namespace GameWordPuzzel.Views
                                         else
                                         {
                                             datake = 0;
-                                            ClearSelectedHelp(sb);
+                                            ClearSelectedBT(sb);
                                             ClearItemHelp(obj);
                                             break;
 
@@ -1479,7 +1544,7 @@ namespace GameWordPuzzel.Views
                                         else
                                         {
                                             datake = 0;
-                                            ClearSelectedHelp(sb);
+                                            ClearSelectedBT(sb);
                                             ClearItemHelp(obj);
                                             break;
 
@@ -1504,7 +1569,7 @@ namespace GameWordPuzzel.Views
                                 datake = 0;
                               //  "Diagonal Left To Right To Up : ";
                                 var l = Helper.FindOnesFromLeftToRight((new int[rows, columns]), i, j);
-                                if (l.FirstCount > findtext.Length)
+                                if (l.FirstCount >= findtext.Length)
                                 {
                                     await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
                                     sb.Add(startobj);
@@ -1524,7 +1589,7 @@ namespace GameWordPuzzel.Views
                                         else
                                         {
                                             datake = 0;
-                                            ClearSelectedHelp(sb);
+                                            ClearSelectedBT(sb);
                                             ClearItemHelp(obj);
                                             break;
 
@@ -1549,12 +1614,12 @@ namespace GameWordPuzzel.Views
                             {
                                // "Diagonal Right To Left To Bottom : ";
                                 var l = Helper.FindOnesFromRightToLeft((new int[rows, columns]), i, j);
-                                if (l.SecoundCount > findtext.Length)
+                                if (l.SecoundCount >= findtext.Length)
                                 {
                                     await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
                                     sb.Add(startobj);
                                     datake++;
-                                    int m = j;
+                                    int m = j-1;
                                     for (var n = i + 1; n < rows; n++)
                                     {
 
@@ -1569,7 +1634,7 @@ namespace GameWordPuzzel.Views
                                         else
                                         {
                                             datake = 0;
-                                            ClearSelectedHelp(sb);
+                                            ClearSelectedBT(sb);
                                             ClearItemHelp(obj);
                                             break;
 
@@ -1594,7 +1659,7 @@ namespace GameWordPuzzel.Views
                                 //"Diagonal  Right to Left To Up : ";
                                 var l = Helper.FindOnesFromRightToLeft((new int[rows, columns]), i, j);
                                
-                                if (l.FirstCount > findtext.Length)
+                                if (l.FirstCount >= findtext.Length)
                                 {
                                     await Task.Factory.StartNew(() => SetUsed(startobj, ArahPanah.HorizontalToRight));
                                     sb.Add(startobj);
@@ -1615,7 +1680,7 @@ namespace GameWordPuzzel.Views
                                         else
                                         {
                                             datake = 0;
-                                            ClearSelectedHelp(sb);
+                                            ClearSelectedBT(sb);
                                             ClearItemHelp(obj);
                                             break;
 
@@ -1692,7 +1757,7 @@ namespace GameWordPuzzel.Views
             }
         }
 
-        private void ClearSelectedHelp(List<ButtonView> sb)
+        private void ClearSelectedBT(List<ButtonView> sb)
         {
           foreach(var item in sb)
             {
@@ -1713,12 +1778,32 @@ namespace GameWordPuzzel.Views
             sb.Clear();
         }
 
+
+        private void ClearSelectedKMP(List<ButtonView> sb)
+        {
+            foreach (var item in sb)
+            {
+                item.LeftVisible = Visibility.Hidden;
+                item.RightVisible = Visibility.Hidden;
+                item.UpVisible = Visibility.Hidden;
+                item.UpRightVisible = Visibility.Hidden;
+                item.UpLeftVisible = Visibility.Hidden;
+                item.DownVisible = Visibility.Hidden;
+                item.DownLeftVisible = Visibility.Hidden;
+                item.DownRightVisible = Visibility.Hidden;
+
+                if (!item.IsFounded)
+                {
+                    item.ClearUsed();
+                }
+            }
+        }
+
         private void SetUsed(ButtonView item,ArahPanah arah)
         {
-            item.SetArah(arah);
             item.SetIsUsed(CurrentColor);
-            Thread.Sleep(500);
-
+            item.SetArah(arah);
+            Thread.Sleep(this.SleepTime);
         }
 
         private ButtonView GetButtonView(IEnumerable<ButtonView> datas, int i, int j)
@@ -1729,6 +1814,315 @@ namespace GameWordPuzzel.Views
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             SolutionWithBackTractAsync();
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            this.SleepTime =Convert.ToInt32( ((Slider)sender).Value);
+        }
+
+        private void KMP_Click(object sender, RoutedEventArgs e)
+        {
+           SolutionWithKMAsync();
+        }
+
+        private async Task SolutionWithKMAsync()
+        {
+            // Data Vertical Horizontal To Right
+            console.Document.Blocks.Clear();
+            string findtext = "";
+            BorderLabel bl = null;
+            foreach (var data in dataToSearchView.Children)
+            {
+                bl = (BorderLabel)data;
+                if (bl != null && !bl.IsFound)
+                {
+                    findtext = bl.Name;
+                    console.AppendText(string.Format("Data dicari adalah : '{0}' \r", findtext, Environment.NewLine));
+                    break;
+                }
+            }
+
+            var IsFounded = false;
+
+            var dictionary = GetDataKM();
+            foreach (var item in dictionary)
+            {
+
+                console.AppendText(string.Format("Pencarian dimulai dari : '{0}' ke '{1}' \r", "Kiri", "Kanan", Environment.NewLine));
+                if (item.Key == ArahPanah.HorizontalToRight)
+                {
+                    var result = KMPSearchAsync(findtext,item.Value[0]);
+                }
+
+                if (!IsFounded && item.Key == ArahPanah.HorizontalToLeft)
+                {
+                    foreach (var d in item.Value)
+                    {
+                        
+                    }
+                }
+                if (!IsFounded && item.Key == ArahPanah.VerticalToBottom)
+                { }
+                if (!IsFounded && item.Key == ArahPanah.VerticalToTop)
+                { }
+                if (!IsFounded && item.Key == ArahPanah.DiagonalToDownRight)
+                { }
+                if (!IsFounded && item.Key == ArahPanah.DiagonalToUpLeft)
+                { }
+                if (!IsFounded && item.Key == ArahPanah.DiagonalToDownLeft)
+                { }
+                if (!IsFounded && item.Key == ArahPanah.DiagonalToUpRight)
+                {
+
+                }
+
+            }
+        }
+
+     
+
+        private Dictionary<ArahPanah, List<DataPosition>> GetDataKM()
+        {
+            Dictionary<ArahPanah, List<DataPosition>> list = new Dictionary<ArahPanah, List<DataPosition>>();
+            List<DataPosition> DataHorizintalToRight = new List<DataPosition>();
+            List<DataPosition> DataHorizintalToLeft = new List<DataPosition>();
+            List<DataPosition> VerticalToBottom = new List<DataPosition>();
+            List<DataPosition> VerticalToUp = new List<DataPosition>();
+            List<DataPosition> DiagonalLRB = new List<DataPosition>();
+            List<DataPosition> DiagonalLRU = new List<DataPosition>();
+            List<DataPosition> DiagonalRLB = new List<DataPosition>();
+            List<DataPosition> DiagonalRLU = new List<DataPosition>();
+
+            for (var i = 0; i < rows; i++)
+            {
+                var sb = new DataPosition();
+                var sb1 = new DataPosition();
+                var vb = new DataPosition();
+                var vt = new DataPosition();
+                int m = columns - 1;
+                for (var j = 0; j < columns; j++)
+                {
+                    sb.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), i, j));
+                    sb1.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), i, m));
+                    vb.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), j, i));
+                    vt.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), m, i));
+                    m--;
+                }
+
+
+                DataHorizintalToRight.Add(sb);
+                DataHorizintalToLeft.Add(sb1);
+                VerticalToBottom.Add(vb);
+                VerticalToUp.Add(vt);
+
+                Console.WriteLine();
+            }
+
+            //Diagobal
+            for (var i = 0; i < columns; i++)
+            {
+                var drlb = new DataPosition();
+                var drlb1 = new DataPosition();
+                var drlu = new DataPosition();
+                var drlu1 = new DataPosition();
+
+                var c = 0;
+                var z = columns - 1;
+
+                for (var j = i; j >= 0 && c < columns; j--)
+                {
+                    drlb.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), c, j));
+                    drlu.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), j, c));
+
+                    c++;
+
+                }
+
+                c = columns - 1;
+
+                for (var j = i; j < columns && c < columns; j++)
+                {
+                    drlb1.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), j, c));
+                    drlu1.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), c, j));
+                    c--;
+                }
+
+
+                DiagonalRLB.Add(drlb);
+                DiagonalRLB.Add(drlb1);
+
+                DiagonalRLU.Add(drlu);
+                DiagonalRLU.Add(drlu1);
+
+
+
+                //Left To Right
+
+                var dlrb = new DataPosition() ;
+                var dlrb1 = new DataPosition();
+                c = i;
+                for (var j = 0; j < columns && c < columns; j++)
+                {
+                    dlrb.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), j, c));
+                    dlrb1.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), c, j));
+                    c++;
+                }
+
+
+                var dlru = new DataPosition(); 
+                var dlru1 = new DataPosition();
+                c = columns - 1;
+                for (var j = i; j >= 0; j--)
+                {
+                    dlru.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), j, c));
+                    dlru1.AddButton(GetButtonView(canvas.Children.OfType<ButtonView>(), c, j));
+                    c--;
+                }
+
+
+                DiagonalLRB.Add(dlrb);
+                DiagonalLRB.Add(dlrb1);
+
+                DiagonalLRU.Add(dlru);
+                DiagonalLRU.Add(dlru1);
+
+            }
+
+            list.Add(ArahPanah.DiagonalToDownLeft, DiagonalRLB);
+            list.Add(ArahPanah.DiagonalToDownRight,DiagonalLRB);
+            list.Add(ArahPanah.DiagonalToUpLeft, DiagonalLRU);
+            list.Add(ArahPanah.DiagonalToUpRight, DiagonalRLU);
+            list.Add(ArahPanah.HorizontalToLeft, DataHorizintalToLeft);
+            list.Add(ArahPanah.HorizontalToRight, DataHorizintalToRight);
+            list.Add(ArahPanah.VerticalToBottom, VerticalToBottom);
+            list.Add(ArahPanah.VerticalToTop,VerticalToUp);
+            return list;
+
+        }
+
+
+        //KM Prccess
+        private async Task<Tuple<bool, int>> KMPSearchAsync(string pat, DataPosition dp)
+        {
+            string txt = dp.Content;
+            int M = pat.Length;
+            int N = txt.Length;
+            var found = false;
+            int index=0;
+            
+
+            // create lps[] that will hold the longest
+            // prefix suffix values for pattern
+            int[] lps = new int[M];
+            int j = 0;  // index for pat[]
+
+            // Preprocess the pattern (calculate lps[]
+            // array)
+            lps = PreKMP(pat);
+
+            int i = 0;  // index for txt[]
+            while (i < N)
+            {
+                var p = pat.Substring(j, 1);
+                var b = txt.Substring(i, 1);
+                if (pat.Substring(j, 1) == txt.Substring(i, 1))
+                {
+                    var item = dp.Datas[i];
+                   await Task.Factory.StartNew(()=> SetUsedKM(item,Brushes.Green, ArahPanah.HorizontalToRight));
+                    j++;
+                    i++;
+                }
+
+                if (j == M)
+                {
+                    index = (i - j);
+                    console.AppendText(string.Format("Found : '{0}' On Index '{1}' \r ", pat, index));
+                    j = lps[j - 1];
+                    found = true;
+                    break;
+                   
+                }
+
+                // mismatch after j matches
+                else if (i < N && pat.Substring(j, 1) != txt.Substring(i, 1))
+                {
+                    // Do not match lps[0..lps[j-1]] characters,
+                    // they will match anyway
+                    var item = dp.Datas[i];
+                    await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Red, ArahPanah.None));
+                    if (j != 0)
+                    {
+                        j = lps[j - 1];
+                        if(j>0)
+                        {
+                            this.ClearSelectedKMP(dp.Datas);
+                            var z = i - j;
+                            for(var l =0;l<j;l++)
+                            {
+                                item = dp.Datas[z];
+                                await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Coral, ArahPanah.None));
+                                z++;
+                            }
+                        }
+
+
+
+                        item = dp.Datas[i];
+                        await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Yellow, ArahPanah.None));
+                    }
+                    else
+                    {
+                        i = i + 1;
+                        item = dp.Datas[i];
+                        await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Yellow, ArahPanah.None));
+                        this.ClearSelectedKMP(dp.Datas);
+                    }
+                   
+
+                   
+
+                }else
+                {
+                    var item = dp.Datas[i];
+                    await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Green, ArahPanah.HorizontalToRight));
+                }
+            }
+            return Tuple.Create(found, index);
+        }
+
+        private  int[] PreKMP(string w)
+        {
+            List<int> p = new List<int>();
+            p.Add(0);
+            int j = 0;
+            for (int i = 1; i < w.Length; i++)
+            {
+                while (j > 0 && w[j] != w[i])
+                    j = p[j - 1];
+
+                if (w[j] == w[i])
+                    j++;
+                p.Add(j);
+            }
+            var sb = new StringBuilder();
+            p.ForEach(n => sb.Append(string.Format("{0}\t", n.ToString())));
+            console.AppendText(string.Format("Prefix : '{0}' \r ", sb.ToString()));
+            return p.ToArray();
+        }
+
+        private void close_Click(object sender, RoutedEventArgs e)
+        {
+            main.Show();
+            this.Close();
+        }
+
+        //KMP SetUsed
+        private void SetUsedKM(ButtonView item,Brush currentColor, ArahPanah arah)
+        {
+            item.SetIsUsed(currentColor);
+            item.SetArah(arah);
+            Thread.Sleep(this.SleepTime);
         }
     }
 }

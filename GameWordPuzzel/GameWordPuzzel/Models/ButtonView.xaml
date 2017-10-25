@@ -16,7 +16,7 @@
             <RowDefinition Height="80*" />
             <RowDefinition Height="10*" />
         </Grid.RowDefinitions>
-        <Button Name="main"  Grid.Row="1" Grid.Column="1"   BorderBrush="{Binding BorderColor}" BorderThickness="{Binding BorderSize}" >
+        <Button Name="main"  Grid.Row="1" Grid.Column="1"  BorderBrush="{Binding BorderColor}" BorderThickness="{Binding BorderSize}"  Foreground="White" Style="{DynamicResource ButtonStyle2}" >
             <Button.Triggers>
                 <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                     <BeginStoryboard >
@@ -29,7 +29,6 @@
                     </BeginStoryboard>
                 </EventTrigger>
             </Button.Triggers>
-
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -39,7 +38,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
             <Button.Background>
-                <SolidColorBrush Color="#FF7EF718" Opacity="0.53"/>
+                <SolidColorBrush Color="#FF0C487A" Opacity="0.4"/>
             </Button.Background>
         </Button>
         <Canvas Visibility="{Binding UpVisible}" Name="arrowUp"  Grid.Row="0" Grid.Column="1" >

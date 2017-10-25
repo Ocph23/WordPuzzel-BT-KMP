@@ -6,38 +6,55 @@
         xmlns:local="clr-namespace:GameWordPuzzel.Views"
         mc:Ignorable="d"
         Title="DataKataView" Height="546.576" Width="660">
-    <Grid Margin="10">
+    <Window.Background>
+        <ImageBrush ImageSource="/GameWordPuzzel;component/Images/blue-squares-wallpaper-1857-2006-hd-wallpapers.jpg"/>
+    </Window.Background>
+    <Grid >
+        <Grid.Background>
+            <SolidColorBrush Color="#FF05641B" Opacity="0.5"></SolidColorBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="115*"/>
-            <RowDefinition Height="9*"/>
+            <RowDefinition Height="90*"/>
+            <RowDefinition Height="10*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="40*"/>
             <ColumnDefinition Width="60*"/>
         </Grid.ColumnDefinitions>
-        <GroupBox Header="Kategori"   Grid.Column="0" Grid.Row="0" FontSize="20" >
-            <GroupBox.Background>
-                <ImageBrush ImageSource="/GameWordPuzzel;component/Images/magical-castle-background.png"/>
-            </GroupBox.Background>
-            <ListBox ItemsSource="{Binding KategoriesView, Mode=TwoWay}" SelectedItem="{Binding CategorySelected}" Margin="10,10,10,4" BorderBrush="{x:Null}" Background="{x:Null}">
+        <GroupBox Header="Kategori"   Grid.Column="0" Grid.Row="0" FontSize="20" Foreground="#FFFDFDFD" >
+            <ListBox ItemsSource="{Binding KategoriesView, Mode=TwoWay}" SelectedItem="{Binding CategorySelected}" Margin="10,10,10,4" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="White">
                 <ListBox.ItemTemplate>
                     <DataTemplate >
                         <TextBlock FontSize="15" Margin="10" Text="{Binding Name}"></TextBlock>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem>
+                            <MenuItem.Template>
+                                <ControlTemplate>
+                                    <StackPanel Margin="35,10">
+                                        <Label FontSize="15" Content="Tambah Kategori"></Label>
+                                        <TextBox Name="addkategori" Width="150" Height="35" FontSize="16" VerticalContentAlignment="Center" LostFocus="addkategori_LostFocus"></TextBox>
+                                    </StackPanel>
+                                </ControlTemplate>
+                            </MenuItem.Template>
+                        </MenuItem>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
             </ListBox>
         </GroupBox>
-        <GroupBox Header="Daftar Kata" Grid.Column="1" Grid.Row="0" FontSize="20">
-            <GroupBox.Background>
-                <ImageBrush ImageSource="/GameWordPuzzel;component/Images/cartoons-background-006.jpg"/>
-            </GroupBox.Background>
-            <ListBox Margin="10,10,-2,4" ItemsSource="{Binding DaftarView, Mode=TwoWay}" Padding="10" BorderBrush="{x:Null}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="{x:Null}">
+        <GroupBox Header="Daftar Kata" Grid.Column="1" Grid.Row="0" FontSize="20" Foreground="White">
+            <ListBox Margin="10,10,-2,4" ItemsSource="{Binding DaftarView, Mode=TwoWay}" Padding="10" BorderBrush="{x:Null}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="{x:Null}" Foreground="White">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="#FFC3B6B6" BorderBrush="#FFE89191" CornerRadius="10" Height="auto" Width="auto">
+                        <Border  BorderBrush="#FFE89191" CornerRadius="10" Height="auto" Width="auto">
+                            <Border.Background>
+                                <SolidColorBrush Opacity="0.3" Color="#FF02213C"></SolidColorBrush>
+                            </Border.Background>
                             <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Value}" Margin="2"></TextBlock>
-                                <Button Click="btnDelete_Click" Name="btnDelete" Content="X" Margin="2" Command="{Binding DeleteItem}" CommandParameter="{Binding Id}" Visibility="Hidden" Width="0" ToolTip="Delete" Foreground="#FFE80E0E" Background="{x:Null}" BorderBrush="{x:Null}"></Button>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Nilai}" Margin="2"></TextBlock>
+                                <Button Click="btnDelete_Click" Name="btnDelete" Content="X" Margin="2" Command="{Binding DeleteItem}" CommandParameter="{Binding Id}" Visibility="Hidden" Width="0" ToolTip="Delete" Foreground="#FFE80E0E" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold"></Button>
                             </WrapPanel>
                         </Border>
                         <DataTemplate.Triggers>
@@ -70,6 +87,8 @@
                 </ListBox.ContextMenu>
             </ListBox>
         </GroupBox>
-        <Button Margin="5" Content="Close" Grid.Row="1" HorizontalAlignment="Right" Grid.Column="1" Width="83" Click="Button_Click"/>
+        <Button Style="{StaticResource  ButtonStyle1}" FontSize="16" Margin="5" Content="Close"  Grid.Row="1" HorizontalAlignment="Right" Grid.Column="1" Width="83" Click="Button_Click">
+          
+        </Button>
     </Grid>
 </Window>

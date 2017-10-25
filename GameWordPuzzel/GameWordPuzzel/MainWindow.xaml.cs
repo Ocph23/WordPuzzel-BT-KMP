@@ -27,14 +27,27 @@ namespace GameWordPuzzel
 
         private void btnGame_Click(object sender, RoutedEventArgs e)
         {
-            var form = new Views.GameBoard();
-            form.ShowDialog();
+            var form = new Views.DialogBox(this);
+            form.Show();
+            this.Hide();
         }
 
         private void btnadmin_Click(object sender, RoutedEventArgs e)
         {
             var form = new Views.LoginView(this);
             form.ShowDialog();
+        }
+
+        private void exit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void kuis_Click(object sender, RoutedEventArgs e)
+        {
+            var form = new Views.QuizView(this);
+            form.Show();
+            this.Hide();
         }
     }
 }

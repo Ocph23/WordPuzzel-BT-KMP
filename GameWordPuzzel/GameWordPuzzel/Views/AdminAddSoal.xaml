@@ -1,0 +1,65 @@
+﻿<Window x:Class="GameWordPuzzel.Views.AdminAddSoal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameWordPuzzel.Views"
+        mc:Ignorable="d"
+        Title="AdminAddSoal" Height="595.398" Width="948.872" WindowState="Maximized" WindowStyle="None">
+    <Window.Resources>
+        <Style x:Key="HeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="Background" >
+                <Setter.Value>
+                    <SolidColorBrush Color="#FFB9B3B3" Opacity="0.135"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="Wheat" />
+            <Setter Property="BorderThickness" Value="0.5" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+    </Window.Resources>
+    <Window.Background>
+        <ImageBrush ImageSource="/GameWordPuzzel;component/Images/blue-squares-wallpaper-1857-2006-hd-wallpapers.jpg"/>
+    </Window.Background>
+    <Grid >
+        <Grid.Background>
+            <SolidColorBrush Color="#FF05641B" Opacity="0.5"></SolidColorBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="60*"/>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
+        <Label Foreground="White" FontSize="26" Content="DAFTAR SOAL" VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="386,0,385,0"></Label>
+        <DataGrid Margin="10" x:Name="lb" Grid.Row="1" ColumnHeaderStyle="{StaticResource HeaderStyle}"  MinRowHeight="35" FontSize="16"  RowBackground="{x:Null}" 
+                  ItemsSource="{Binding SoalView, Mode=TwoWay}" SelectedItem="{Binding Selected}"
+                  AutoGenerateColumns="False" CanUserAddRows="False"  BorderBrush="#FFB0B0B0" Background="{x:Null}" 
+                  Foreground="White" ToolTip="Right Click Show Menu">
+            <DataGrid.Columns>
+                <DataGridTextColumn  Header="Soal" Width="100*" Binding="{Binding Value}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                            <Setter Property="FrameworkElement.Margin" Value="5"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Tambah Data" Click="Button_Click"></MenuItem>
+                    <MenuItem Name="delete" Header="Hapus" Click="delete_Click"></MenuItem>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+
+        </DataGrid>
+        <Button Name="batal" Click="batal_Click" FontSize="16" Content="Close" Style="{StaticResource ButtonStyle1}" Grid.Row="2" HorizontalAlignment="Right" Width="100" Margin="10"></Button>
+    </Grid>
+</Window>

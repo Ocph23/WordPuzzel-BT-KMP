@@ -20,9 +20,9 @@ namespace GameWordPuzzel
         {
 
             
-            if (File.Exists("database.db"))
+            if (File.Exists("kata.db"))
             {
-                this.ConnectionString = "Data Source=kata.s3db";
+                this.ConnectionString = "Data Source=kata.db";
             }else
             {
                 this.ConnectionString = "Data Source=kata.db;Version=3;New=True;Compress=True;";

@@ -28,11 +28,12 @@ namespace GameWordPuzzel.Views
         public GameBoard(MainWindow main, Cordinate cordinate)
         {
             InitializeComponent();
-            this.Loaded += GameBoard_Loaded;
-            this.DataContext = this;
             this.main = main;
             this.columns = cordinate.Column;
             this.rows = cordinate.Row;
+            this.Loaded += GameBoard_Loaded;
+            this.DataContext = this;
+           
         }
 
         public List<string> DataSource { get; private set; }
@@ -78,6 +79,7 @@ namespace GameWordPuzzel.Views
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
         public Kategori CategorySelected
         {
             get { return _selectedCategories; }
@@ -101,6 +103,8 @@ namespace GameWordPuzzel.Views
                 }
             }
         }
+
+        public Dictionary<ArahPanah, List<DataPosition>> DataKMP { get; private set; }
 
         private void RefreshBoard()
         {
@@ -140,15 +144,17 @@ namespace GameWordPuzzel.Views
             /*
              Percobaan
              */
-            var test = "KAKIKIKIRBNONOBOYO";
+            var test = "KAKIKIKIRSASASSASSSS";
             DataPosition dp = new DataPosition();
+            int c=0,r=0;
             foreach (ButtonView btn in canvas.Children)
             {
-                if (btn.Row == 0)
+                if (btn.Column == c && btn.Row==r)
                 {
-                    btn.main.Content = test.Substring(btn.Column, 1);
+                    btn.main.Content = test.Substring(c, 1);
                     dp.AddButton(btn);
                     SetObjectColorAndUsed(btn);
+                    c++;r++;
                 }
             }
             dataToSearchView.Children.Add(new BorderLabel("KIKIR"));
@@ -373,6 +379,7 @@ namespace GameWordPuzzel.Views
 
             }
         }
+
         private void ClearSelected()
         {
             foreach (var item in ListSelected)
@@ -398,9 +405,6 @@ namespace GameWordPuzzel.Views
             if (border != null)
                 grid.Children.Remove(border);
         }
-
-
-
 
         private DataPosition DiagonalPlace(string item, int row, int col)
         {
@@ -548,7 +552,9 @@ namespace GameWordPuzzel.Views
                             }
 
                         }
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                         catch (Exception ex)
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                         {
                             error++;
                             if (error <= rows-1)
@@ -711,7 +717,9 @@ namespace GameWordPuzzel.Views
 
 
                         }
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                         catch (Exception ex)
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                         {
 
                             error++;
@@ -790,7 +798,9 @@ namespace GameWordPuzzel.Views
                             }
 
                         }
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                         catch (Exception ex)
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                         {
 
                             error++;
@@ -869,7 +879,9 @@ namespace GameWordPuzzel.Views
                             }
 
                         }
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                         catch (Exception ex)
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                         {
                             error++;
                             if (error <= rows)
@@ -1161,7 +1173,9 @@ namespace GameWordPuzzel.Views
                             NotAccepted.Add(item);
                         }
                     }
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                     catch (Exception ex)
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                     {
                         error++;
                         if (error <= columns - 1)
@@ -1232,7 +1246,9 @@ namespace GameWordPuzzel.Views
                         completed = true;
                         console.AppendText(string.Format("{0} from {1}\r", item, ArahPanah.HorizontalToLeft));
                     }
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                     catch (Exception ex)
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                     {
                         error++;
                         if (error <= rows-1)
@@ -1813,7 +1829,9 @@ namespace GameWordPuzzel.Views
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
             SolutionWithBackTractAsync();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -1823,10 +1841,10 @@ namespace GameWordPuzzel.Views
 
         private void KMP_Click(object sender, RoutedEventArgs e)
         {
-           SolutionWithKMAsync();
+             SolutionWithKMAsync();
         }
 
-        private async Task SolutionWithKMAsync()
+        private async void SolutionWithKMAsync()
         {
             // Data Vertical Horizontal To Right
             console.Document.Blocks.Clear();
@@ -1845,29 +1863,54 @@ namespace GameWordPuzzel.Views
 
             var IsFounded = false;
 
-            var dictionary = GetDataKM();
-            foreach (var item in dictionary)
+            if(this.DataKMP==null)
+            {
+              DataKMP= GetDataKM(canvas);
+            }
+
+            foreach (var item in DataKMP)
             {
 
-                console.AppendText(string.Format("Pencarian dimulai dari : '{0}' ke '{1}' \r", "Kiri", "Kanan", Environment.NewLine));
-                if (item.Key == ArahPanah.HorizontalToRight)
+                 if (item.Key == ArahPanah.HorizontalToRight)
                 {
-                    var result = KMPSearchAsync(findtext,item.Value[0]);
+                    console.AppendText(string.Format("Pencarian dimulai dari : '{0}' ke '{1}' \r", "Kiri", "Kanan", Environment.NewLine));
+                    foreach(var data in item.Value)
+                    {
+                        var result = await KMPSearchAsync(findtext, data, ArahPanah.HorizontalToRight);
+                        if (result.Item1)
+                            break;
+                    }
+                    
                 }
 
                 if (!IsFounded && item.Key == ArahPanah.HorizontalToLeft)
                 {
-                    foreach (var d in item.Value)
-                    {
-                        
-                    }
+                    console.AppendText(string.Format("Pencarian dimulai dari : '{0}' ke '{1}' \r", "Kiri", "Kanan", Environment.NewLine));
+
+                    var result =await KMPSearchAsync(findtext, item.Value[0],ArahPanah.HorizontalToLeft);
+                    if (result.Item1)
+                        break;
                 }
                 if (!IsFounded && item.Key == ArahPanah.VerticalToBottom)
-                { }
+                {
+                    console.AppendText(string.Format("Pencarian dimulai dari : '{0}' ke '{1}' \r", "Atas", "Bawah", Environment.NewLine));
+                    var result = await KMPSearchAsync(findtext, item.Value[0], ArahPanah.VerticalToBottom);
+                    if (result.Item1)
+                        break;
+
+                }
                 if (!IsFounded && item.Key == ArahPanah.VerticalToTop)
-                { }
+                {
+                    console.AppendText(string.Format("Pencarian dimulai dari : '{0}' ke '{1}' \r", "Bawah", "Atas", Environment.NewLine));
+                    var result = await KMPSearchAsync(findtext, item.Value[0],ArahPanah.VerticalToTop);
+                    if (result.Item1)
+                        break;
+
+                }
                 if (!IsFounded && item.Key == ArahPanah.DiagonalToDownRight)
-                { }
+                {
+                   
+                }
                 if (!IsFounded && item.Key == ArahPanah.DiagonalToUpLeft)
                 { }
                 if (!IsFounded && item.Key == ArahPanah.DiagonalToDownLeft)
@@ -1880,9 +1923,8 @@ namespace GameWordPuzzel.Views
             }
         }
 
-     
 
-        private Dictionary<ArahPanah, List<DataPosition>> GetDataKM()
+        private Dictionary<ArahPanah, List<DataPosition>> GetDataKM( Grid canvas)
         {
             Dictionary<ArahPanah, List<DataPosition>> list = new Dictionary<ArahPanah, List<DataPosition>>();
             List<DataPosition> DataHorizintalToRight = new List<DataPosition>();
@@ -2003,7 +2045,7 @@ namespace GameWordPuzzel.Views
 
 
         //KM Prccess
-        private async Task<Tuple<bool, int>> KMPSearchAsync(string pat, DataPosition dp)
+        private async Task<Tuple<bool, int>> KMPSearchAsync(string pat, DataPosition dp,ArahPanah arah)
         {
             string txt = dp.Content;
             int M = pat.Length;
@@ -2029,7 +2071,7 @@ namespace GameWordPuzzel.Views
                 if (pat.Substring(j, 1) == txt.Substring(i, 1))
                 {
                     var item = dp.Datas[i];
-                   await Task.Factory.StartNew(()=> SetUsedKM(item,Brushes.Green, ArahPanah.HorizontalToRight));
+                   await Task.Factory.StartNew(()=> SetUsedKM(item,Brushes.Green, arah));
                     j++;
                     i++;
                 }
@@ -2061,6 +2103,105 @@ namespace GameWordPuzzel.Views
                             for(var l =0;l<j;l++)
                             {
                                 item = dp.Datas[z];
+                                await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Coral, arah));
+                                z++;
+                            }
+                        }
+
+
+
+                        item = dp.Datas[i];
+                        await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Yellow, arah));
+                    }
+                    else
+                    {
+                        i = i + 1;
+                        if (i < N)
+                        {
+
+
+                            item = dp.Datas[i];
+                            await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Yellow, ArahPanah.None));
+                        }
+                        this.ClearSelectedKMP(dp.Datas);
+                    }
+                   
+
+                   
+
+                }else if(i<N)
+                {
+                    var item = dp.Datas[i];
+                    await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Green, arah));
+                }else
+                {
+                    this.ClearSelectedKMP(dp.Datas);
+                }
+            }
+            return Tuple.Create(found, index);
+        }
+
+
+        private async Task<object> KMPHorizontalToLeftAsync(string findtext, DataPosition dataPosition)
+        {
+            string txt = dataPosition.Content;
+            string pat = findtext;
+            DataPosition dp = dataPosition;
+            int M = findtext.Length;
+            int N = txt.Length;
+            var found = false;
+            int index = 0;
+
+
+            // create lps[] that will hold the longest
+            // prefix suffix values for pattern
+            int[] lps = new int[M];
+            int j = 0;  // index for pat[]
+
+            // Preprocess the pattern (calculate lps[]
+            // array)
+            lps = PreKMP(pat);
+
+            int i = 0;  // index for txt[]
+            while (i < N)
+            {
+                var p = pat.Substring(j, 1);
+                var b = txt.Substring(i, 1);
+                if (pat.Substring(j, 1) == txt.Substring(i, 1))
+                {
+                    var item = dp.Datas[i];
+                    await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Green, ArahPanah.HorizontalToRight));
+                    j++;
+                    i++;
+                }
+
+                if (j == M)
+                {
+                    index = (i - j);
+                    console.AppendText(string.Format("Found : '{0}' On Index '{1}' \r ", pat, index));
+                    j = lps[j - 1];
+                    found = true;
+                    break;
+
+                }
+
+                // mismatch after j matches
+                else if (i < N && pat.Substring(j, 1) != txt.Substring(i, 1))
+                {
+                    // Do not match lps[0..lps[j-1]] characters,
+                    // they will match anyway
+                    var item = dp.Datas[i];
+                    await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Red, ArahPanah.None));
+                    if (j != 0)
+                    {
+                        j = lps[j - 1];
+                        if (j > 0)
+                        {
+                            this.ClearSelectedKMP(dp.Datas);
+                            var z = i - j;
+                            for (var l = 0; l < j; l++)
+                            {
+                                item = dp.Datas[z];
                                 await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Coral, ArahPanah.None));
                                 z++;
                             }
@@ -2078,11 +2219,12 @@ namespace GameWordPuzzel.Views
                         await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Yellow, ArahPanah.None));
                         this.ClearSelectedKMP(dp.Datas);
                     }
-                   
 
-                   
 
-                }else
+
+
+                }
+                else
                 {
                     var item = dp.Datas[i];
                     await Task.Factory.StartNew(() => SetUsedKM(item, Brushes.Green, ArahPanah.HorizontalToRight));

@@ -1,4 +1,4 @@
-﻿using DAL;
+﻿using Ocph.DAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace GameWordPuzzel.Models
 {
 
    [TableName("Kategori")]
-   public class Kategori:DAL.BaseNotifyProperty
+   public class Kategori:BaseNotify
     {
         private int? _id;
         private string _name;

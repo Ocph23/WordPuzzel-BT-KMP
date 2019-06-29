@@ -1,4 +1,4 @@
-﻿using DAL;
+﻿using Ocph.DAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace GameWordPuzzel.Models
 {
 
     [TableName("Katas")]
-    public class Kata:DAL.BaseNotifyProperty
+    public class Kata:BaseNotify
     {
         private int? _id;
         private int _kategoriid;
@@ -21,8 +21,8 @@ namespace GameWordPuzzel.Models
             get { return _id; }
             set
             {
-                _id = value;
-                OnPropertyChanged();
+              SetProperty(ref _id , value);
+         
             }
         }
 
@@ -31,8 +31,8 @@ namespace GameWordPuzzel.Models
             get { return _kategoriid; }
             set
             {
-                _kategoriid = value;
-               OnPropertyChanged();
+               
+                SetProperty(ref _kategoriid, value);
             }
 
         }
@@ -42,8 +42,7 @@ namespace GameWordPuzzel.Models
             get { return _nilai; }
             set
             {
-                _nilai= value;
-                OnPropertyChanged();
+                SetProperty(ref _nilai ,value);
             }
         }
     }

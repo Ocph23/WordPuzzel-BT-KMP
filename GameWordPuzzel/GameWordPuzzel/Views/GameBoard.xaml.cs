@@ -368,12 +368,12 @@ namespace GameWordPuzzel.Views
                 {
                     foreach (var item in ListSelected)
                     {
-                        var locals = item.GetLocalValueEnumerator();
-                        while (locals.MoveNext())
-                        {
-                            var a = locals.Current.Property;
-                        }
-                        //   item.Background.ClearValue(item.Background);
+                        //var locals = item.GetLocalValueEnumerator();
+                        //while (locals.MoveNext())
+                        //{
+                        //    var a = locals.Current.Property;
+                        //}
+                        ////   item.Background.ClearValue(item.Background);
                     }
                 }
 

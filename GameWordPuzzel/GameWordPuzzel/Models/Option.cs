@@ -1,4 +1,4 @@
-﻿using DAL;
+﻿using Ocph.DAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace GameWordPuzzel.Models
 {
     [TableName("Pilihan")]
-  public  class Option:BaseNotifyProperty
+  public  class Option:BaseNotify
     {
               
         private int? _id;
@@ -21,24 +21,27 @@ namespace GameWordPuzzel.Models
         public int? Id
         {
             get { return _id; }
-            set { _id = value.Value;OnPropertyChanged(); }
+            set
+            {
+                SetProperty(ref _id, value);
+            }
         }
-
        
         [DbColumn("SoalId")]
-
         public int SoalId
         {
             get { return _soalId; }
-            set { _soalId = value; OnPropertyChanged(); }
+            set
+            {
+                SetProperty(ref _soalId, value);
+            }
         }
-
         
         [DbColumn("Value")]
         public string Value
         {
             get { return _value; }
-            set { _value = value; OnPropertyChanged(); }
+            set { SetProperty(ref _value, value); }
         }
 
 
@@ -50,7 +53,7 @@ namespace GameWordPuzzel.Models
         public bool IsTrueAnswer
         {
             get { return _isTrue; }
-            set { _isTrue = value;OnPropertyChanged(); }
+            set { SetProperty(ref _isTrue, value); }
         }
 
 

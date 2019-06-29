@@ -1,5 +1,4 @@
-﻿using DAL.DContext;
-using DAL.Repository;
+﻿using Ocph.DAL.Repository;
 using GameWordPuzzel.Models;
 using System;
 using System.Collections.Generic;
@@ -11,24 +10,20 @@ using System.Threading.Tasks;
 
 namespace GameWordPuzzel
 {
-    public class OcphDbContext : IDbContext, IDisposable
+    public class OcphDbContext :Ocph.DAL.Provider.SQLite.SQLiteDbConnection
     {
-        private string ConnectionString;
-        private IDbConnection _Connection;
 
         public OcphDbContext()
         {
-
-            
             if (File.Exists("kata.db"))
             {
                 this.ConnectionString = "Data Source=kata.db";
             }else
             {
                 this.ConnectionString = "Data Source=kata.db;Version=3;New=True;Compress=True;";
-                _Connection = new SQLiteContextConnection(ConnectionString);
-                _Connection.Open();
-                IDbCommand cmd = _Connection.CreateCommand();
+                //  _Connection = new SQLiteContextConnection(ConnectionString);
+                this.Open();
+                IDbCommand cmd = this.CreateCommand();
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Kategori (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR(100))";
                 IDataReader reader = cmd.ExecuteReader();
                 reader.Close();
@@ -56,31 +51,6 @@ namespace GameWordPuzzel
 
         }
 
-        public IDbConnection Connection
-        {
-            get
-            {
-                if (_Connection == null)
-                {
-                    _Connection = new SQLiteContextConnection(this.ConnectionString);
-                    return _Connection;
-                }
-                else
-                {
-                    return _Connection;
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            if (_Connection != null)
-            {
-                if (this.Connection.State != ConnectionState.Closed)
-                {
-                    this.Connection.Close();
-                }
-            }
-        }
+      
     }
 }

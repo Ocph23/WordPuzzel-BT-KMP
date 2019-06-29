@@ -1,4 +1,4 @@
-﻿using DAL;
+﻿using Ocph.DAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace GameWordPuzzel.Models
 
     public delegate void delChangeAnswer(bool answer,Option option);
     [TableName("Soal")]
-   public class Soal:DAL.BaseNotifyProperty
+   public class Soal:BaseNotify
     {
         private int? id;
         [PrimaryKey("Id")]
@@ -19,8 +19,7 @@ namespace GameWordPuzzel.Models
         public int? Id
         {
             get { return id; }
-            set { id = value;
-                OnPropertyChanged();
+            set {SetProperty(ref id ,value);
             }
         }
 
@@ -29,7 +28,10 @@ namespace GameWordPuzzel.Models
         public string Value
         {
             get { return _value; }
-            set { _value = value; OnPropertyChanged(); }
+            set
+            {
+                SetProperty(ref _value, value);
+            }
         }
 
         private Level level;
@@ -37,7 +39,10 @@ namespace GameWordPuzzel.Models
         public Level Level
         {
             get { return level; }
-            set { level = value; OnPropertyChanged(); }
+            set
+            {
+                SetProperty(ref level, value);
+            }
         }
 
         public bool? CorrectAnswer { get; private set; }

@@ -44,7 +44,7 @@ namespace GameWordPuzzel.Views
 
                 using (var db = new OcphDbContext())
                 {
-                    var trans = db.Connection.BeginTransaction();
+                    var trans = db.BeginTransaction();
                     try
                     {
                         var soal = new Models.Soal { Level = Level.Easy, Value = soalTxt.Text };
